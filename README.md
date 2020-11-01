@@ -1,4 +1,4 @@
-# RRS_Over_UDP_Project
+# UDP_Project
 Communication Networks and Protocols Project
 
 ## Project diagram
