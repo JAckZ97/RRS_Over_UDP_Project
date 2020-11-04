@@ -5,6 +5,9 @@ import yaml
 HOST = 'localhost' 
 PORT = 8888 
 
+# TODO:
+# handle the message 
+
 ''' data model
 User :
     Client_Name : 
