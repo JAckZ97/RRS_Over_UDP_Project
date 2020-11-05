@@ -16,7 +16,6 @@ def update():
 msgFunctions = {
     mt.Register: register,
     mt.Update: update,
-
 }
 
 ipAddress = "127.0.0.1"
