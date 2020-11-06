@@ -7,6 +7,7 @@ class DatabaseController:
 
 
     def readFile(self):
+
         with open("database.yaml", "r") as yamlFile:
             database = yaml.load_all(yamlFile, Loader=yaml.FullLoader)
             for user in database:
@@ -15,13 +16,15 @@ class DatabaseController:
 
 
     def writeFile(self, message):
+
         # userMessage = {'message': [message.decode('utf-8')]}
-        userMessage = {'message': [message]}
+        userMessage = {'message': {'name': message}}
         with open("database.yaml", "w") as yamlFile:
             yaml.dump(userMessage, yamlFile)
 
 
     def updateFile(self, new_yaml_data_dict):
+
         with open('database.yaml','r') as yamlfile:
             databaseUpdate = yaml.safe_load(yamlfile) # Note the safe_load
             databaseUpdate['User'].update(new_yaml_data_dict)
@@ -33,10 +36,12 @@ class DatabaseController:
 
     def checkExistUser(self, name):
 
-        '''
-        if name exist
-            return ture
-        else 
-            return false
-        '''
+        with open('database.yaml','r') as yamlfile:
+            database = yaml.safe_load(yamlfile) 
+            for k, v in database["User"].items():
+
+                # name not exist in the database
+                if name != database["User"][k]["Client_Name"]:
+                    return False
+        # name exist
         return True
