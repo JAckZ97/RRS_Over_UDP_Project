@@ -13,13 +13,31 @@ except socket.error as msg:
 
 
 while True :
-    # msg = b'hello server. '
-    msg = Message(MessageTypes.Register)
+
+
+    # msg = Message(MessageTypes.Register)
 
     try :
+        registerMessage = input("Enter message: ")
+        messageList = registerMessage.split()
+
+        # if messageList[0] == MessageTypes.Register:
+
+        msgList = {
+                'user 3': {
+                    'Client_Name': messageList[1], 
+                    'IP_address': messageList[2], 
+                    'Socket_Number': int(messageList[3]), 
+                    'Register_Status': True,
+                    'Subject_of_Interest': []
+                }
+            }
         msgControl = MessageController()
         
-        client_sock.sendto(msgControl.serialize(msg), (HOST, PORT))
+        client_sock.sendto(msgControl.serialize(msgList), (HOST, PORT))
+        
+        print('success')
+        
          
         # data, addr = client_sock.recvfrom(1024)
         # print (data.decode('utf-8'))

@@ -2,6 +2,7 @@
 # imports
 import pickle
 import enum
+import random
 
 class MessageTypes(enum.Enum):
     Default = "default"
@@ -14,9 +15,13 @@ class MessageTypes(enum.Enum):
 class Message:
     def __init__(self, type_):
 
+        requestNumber = random.randint()        
+        if requestNumber < 0:
+            requestNumber *= -1
+
         # variables
         self.type_ = type_
-        self.rqNum = 0
+        self.rqNum = requestNumber
         self.name = "Default User"
         self.ipAddress = "localhost"
         self.socketNum = 8888

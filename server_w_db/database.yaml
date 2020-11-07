@@ -1,2 +1,19 @@
-message:
-  name: Default User
+User:
+  user 1:
+    Client_Name: Jack
+    IP_address: localhost
+    Register_Status: true
+    Socket_Number: 8888
+    Subject_of_Interest: []
+  user 2:
+    Client_Name: John
+    IP_address: localhost
+    Register_Status: true
+    Socket_Number: 2222
+    Subject_of_Interest: []
+  user 3:
+    Client_Name: Josh
+    IP_address: localhost
+    Register_Status: true
+    Socket_Number: 3333
+    Subject_of_Interest: []
