@@ -17,3 +17,15 @@ User:
     Register_Status: true
     Socket_Number: 3333
     Subject_of_Interest: []
+  user 4:
+    Client_Name: Jack
+    IP_address: localhost
+    Register_Status: true
+    Socket_Number: 1111
+    Subject_of_Interest: []
+  user 5:
+    Client_Name: Lina
+    IP_address: loalhost
+    Register_Status: true
+    Socket_Number: 1111
+    Subject_of_Interest: []

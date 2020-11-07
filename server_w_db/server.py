@@ -4,6 +4,7 @@ import yaml
 from message_db import Message, MessageController
 from message_db import MessageTypes as mt
 from database import DatabaseController 
+from database import Count
 
 HOST = 'localhost' 
 PORT = 8888 
@@ -38,6 +39,8 @@ except socket.error as msg:
 
 msgControl = MessageController()
 database = DatabaseController()
+count = Count()
+countNext = count.yaml_count()
 
 while True:
 
@@ -47,18 +50,18 @@ while True:
         if not data: 
             break
 
-        '''
-        if database.checkExistUser() == True:
-            reply = (b'REGISTER-DENIED ')
+        name = msgControl.deserialize(data).get('Client_Name')
+        
+        if database.checkExistUser(name) == True:
+            print ('REGISTER-DENIED ')
         else:
             # reply message
-            reply = (b'REGISTERED ')
-
-        name = msgControl.deserialize(data).name
-        '''
+            print ('REGISTERED ')
+            database.updateFile(msgControl.deserialize(data), countNext)
+        
 
         # load reply message into yaml
-        database.updateFile(msgControl.deserialize(data))
+        # database.updateFile(msgControl.deserialize(data), countNext)
 
         # read from yaml
         # sock.sendto(database.readFile() , addr)

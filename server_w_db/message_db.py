@@ -15,7 +15,7 @@ class MessageTypes(enum.Enum):
 class Message:
     def __init__(self, type_):
 
-        requestNumber = random.randint()        
+        requestNumber = random.randint(1, 10000)        
         if requestNumber < 0:
             requestNumber *= -1
 

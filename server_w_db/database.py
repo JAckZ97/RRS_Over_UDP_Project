@@ -23,11 +23,12 @@ class DatabaseController:
             yaml.dump(userMessage, yamlFile)
 
 
-    def updateFile(self, new_yaml_data_dict):
+    def updateFile(self, new_yaml_data_dict, msgCount):
 
         with open('database.yaml','r') as yamlfile:
             databaseUpdate = yaml.safe_load(yamlfile) # Note the safe_load
-            databaseUpdate['User'].update(new_yaml_data_dict)
+            databaseUpdate['User'].update({"user " + str(msgCount): new_yaml_data_dict})
+            # databaseUpdate['User'].update({"user " : {new_yaml_data_dict}})
 
         if databaseUpdate:
             with open('database.yaml','w') as yamlfile:
@@ -39,9 +40,20 @@ class DatabaseController:
         with open('database.yaml','r') as yamlfile:
             database = yaml.safe_load(yamlfile) 
             for k, v in database["User"].items():
-
                 # name not exist in the database
                 if name != database["User"][k]["Client_Name"]:
                     return False
-        # name exist
-        return True
+                else:
+                    # name exist
+                    return True
+                    
+
+class Count:
+    def __init__(self):
+        pass
+
+    def yaml_count(self):
+        with open('database.yaml','r') as yamlfile:
+            database = yaml.safe_load(yamlfile)
+            countNext = sum([len(database["User"])]) + 1 
+        return countNext
