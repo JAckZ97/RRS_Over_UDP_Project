@@ -3,8 +3,8 @@
 # imports
 import socket
 # user imports
-from message_db import Message, MessageController
-from message_db import MessageTypes as mt
+from message import Message, MessageController
+from message import MessageTypes as mt
 
 # switch functions
 def register():
@@ -16,7 +16,6 @@ def update():
 msgFunctions = {
     mt.Register: register,
     mt.Update: update,
-
 }
 
 ipAddress = "127.0.0.1"

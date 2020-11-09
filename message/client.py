@@ -3,7 +3,7 @@
 # imports
 import socket
 # user imports
-from message_db import Message, MessageController, MessageTypes
+from message import Message, MessageController, MessageTypes
 
 ipAddress = "127.0.0.1"
 portNo = 6789
