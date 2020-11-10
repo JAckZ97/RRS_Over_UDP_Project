@@ -40,7 +40,6 @@ except socket.error as msg:
 msgControl = MessageController()
 database = DatabaseController()
 count = Count()
-countNext = count.yaml_count()
 
 while True:
 
@@ -57,6 +56,7 @@ while True:
         else:
             # reply message
             print ('REGISTERED ')
+            countNext = count.yaml_count()
             database.updateFile(msgControl.deserialize(data), countNext)
         
 

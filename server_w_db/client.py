@@ -30,7 +30,7 @@ while True :
 
             msgControl = MessageController()
             client_sock.sendto(msgControl.serialize(msgList), (HOST, PORT))
-            print('success')
+            # print('success')
         else:
             print('register not success')
 
