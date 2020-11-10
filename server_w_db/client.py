@@ -33,9 +33,6 @@ while True :
             print('success')
         else:
             print('register not success')
-         
-        # data, addr = client_sock.recvfrom(1024)
-        # print (data.decode('utf-8'))
 
         break
      
