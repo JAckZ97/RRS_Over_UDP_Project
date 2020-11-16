@@ -1,65 +1,159 @@
 import yaml
+import enum
+
+# FIXME -> instead of userNum, but userName -> use a for loop to find the user with the name
 
 class DatabaseController:
-    
+    """
+    structure of the database
+ 
+    user-1:
+        client_name: Jack
+        ip_address: localhost
+        register_status: true
+        socket_number: 8888
+        subject_interest: []
+    """
+    class User:
+        class UserDataType(enum.Enum):
+            CLIENT_NAME = "client_name"
+            IP_ADDRESS = "ip_address"
+            REGISTER_STATUS = "register_status"
+            SOCKET_NUMBER = "socket_number"
+            SUBJECT_INTEREST = "subject_interest"
+
+        def __init__(self, name, ipAdd, regStat, sockNum, subjInts):
+            self.name = name
+            self.ipAdd = ipAdd
+            self.regStat = regStat
+            self.sockNum = sockNum
+            self.subjInts = subjInts
+
+            self.userData = {
+                self.UserDataType.CLIENT_NAME.value: self.name,
+                self.UserDataType.IP_ADDRESS.value: self.ipAdd,
+                self.UserDataType.REGISTER_STATUS.value: self.regStat,
+                self.UserDataType.SOCKET_NUMBER.value: self.sockNum,
+                self.UserDataType.SUBJECT_INTEREST.value: self.subjInts
+            }
+
+        def get_data(self):
+            return self.userData
+
     def __init__(self):
         self.dbFile = "database.yaml"
+        self.dbName = "User"
+        self.userData = [
+            self.User.UserDataType.CLIENT_NAME,
+            self.User.UserDataType.IP_ADDRESS,
+            self.User.UserDataType.REGISTER_STATUS,
+            self.User.UserDataType.SOCKET_NUMBER,
+            self.User.UserDataType.SUBJECT_INTEREST
+        ]
 
-    # read the yaml file
-    def readFile(self):
+        # get data from database
+        self.count = self.yaml_count()
+        self.userNameList = self.get_existing_users()
 
-        with open(self.dbFile, "r") as yamlFile:
-            database = yaml.load_all(yamlFile, Loader=yaml.FullLoader)
-            for user in database:
-                for k, v in user.items():
-                    return " ".join(v).encode()
-
-
-    # reload the entire yaml file with message (NOT plan to use for now)
-    def writeFile(self, message):
-
-        # userMessage = {'message': [message.decode('utf-8')]}
-        userMessage = {'message': {'name': message}}
-        with open(self.dbFile, "w") as yamlFile:
-            yaml.dump(userMessage, yamlFile)
-
-
-    # update the yaml file by adding the newest registered user
-    def updateFile(self, new_yaml_data_dict, msgCount):
-
-        with open(self.dbFile,'r') as yamlfile:
-            databaseUpdate = yaml.safe_load(yamlfile) # Note the safe_load
-            databaseUpdate['User'].update({"user " + str(msgCount): new_yaml_data_dict})
-
-        if databaseUpdate:
-            with open(self.dbFile,'w') as yamlfile:
-                yaml.safe_dump(databaseUpdate, yamlfile) # Also note the safe_dump
-
-
-    # check the exist user by user name
-    def checkExistUser(self, name):
-
-        with open(self.dbFile,'r') as yamlfile:
-            database = yaml.safe_load(yamlfile) 
-            nameList = []
-            for k, v in database["User"].items():
-                nameList.append(database["User"][k]["Client_Name"])
-            
-            # name exist
-            if name in nameList:
-                return True
-            else:
-                # name not exist
-                return False
-                    
-
-class Count:
-    def __init__(self):
-        self.dbFile = "database.yaml"
+    def setup(self):
+        # write a default user to the database to setup the structure
+        pass
 
     # count the number of user + 1
     def yaml_count(self):
         with open(self.dbFile,'r') as yamlfile:
             database = yaml.safe_load(yamlfile)
-            countNext = sum([len(database["User"])]) + 1 
-        return countNext
+            count = sum([len(database[self.dbName])])
+        return count
+
+    # get the list of existing users
+    def get_existing_users(self):
+        nameList = []
+        with open(self.dbFile,'r') as yamlfile:
+            database = yaml.safe_load(yamlfile)
+            nameList = []
+            for k, v in database[self.dbName].items():
+                nameList.append(database[self.dbName][k][self.User.UserDataType.CLIENT_NAME.value])
+
+        return nameList
+
+    # read the yaml file for one data of a user
+    def readOneData(self, userNum, dataType):
+        # check if the dataType is valid
+        if dataType in self.userData:
+            userID = "user-" + str(userNum)
+
+            with open(self.dbFile, "r") as yamlFile:
+                database = yaml.load(yamlFile, Loader=yaml.FullLoader)
+                return database[self.dbName][userID][dataType.value]
+
+        else:
+            print("invalid dataType")
+
+    # # read the yaml file
+    # def readFile(self):
+    #     with open(self.dbFile, "r") as yamlFile:
+    #         database = yaml.load_all(yamlFile, Loader=yaml.FullLoader)
+    #         for user in database:
+    #             for k, v in user.items():
+    #                 return " ".join(v).encode()
+
+    # # reload the entire yaml file with message (NOT plan to use for now)
+    # def writeFile(self, message):
+    #     # userMessage = {'message': [message.decode('utf-8')]}
+    #     userMessage = {'message': {'name': message}}
+    #     with open(self.dbFile, "w") as yamlFile:
+    #         yaml.dump(userMessage, yamlFile)
+
+    # edit user data
+    def editUserData(self, userNum, dataType, newData):
+        # only edit if dataType valid and we are not changing a name
+        if dataType in self.userData:
+            if dataType != self.User.UserDataType.CLIENT_NAME:
+                # read current database
+                with open(self.dbFile,'r') as yamlfile:
+                    databaseUpdate = yaml.safe_load(yamlfile) # Note the safe_load
+                    databaseUpdate['User']["user-"+str(userNum)][dataType.value] = newData
+
+                    if databaseUpdate:
+                        with open(self.dbFile,'w') as yamlfile:
+                            yaml.safe_dump(databaseUpdate, yamlfile) # Also note the safe_dump
+
+    # update the yaml file by adding the newest registered user
+    def addUser(self, user: User):
+        userName = user.get_data()[self.User.UserDataType.CLIENT_NAME.value]
+        if not self.checkExistUser(userName):
+
+            # updater database
+            # increment count of database
+            self.count = self.count + 1
+
+            # add user to name list
+            self.userNameList = userName
+
+            # add user to database
+            with open(self.dbFile,'r') as yamlfile:
+                databaseUpdate = yaml.safe_load(yamlfile) # Note the safe_load
+                databaseUpdate['User'].update({"user-" + str(self.count): user.get_data()})
+
+            if databaseUpdate:
+                with open(self.dbFile,'w') as yamlfile:
+                    yaml.safe_dump(databaseUpdate, yamlfile) # Also note the safe_dump
+
+        else:
+            print("user already exists")
+
+    # check the exist user by user name
+    def checkExistUser(self, name):
+        # name exist
+        if name in self.userNameList:
+            return True
+        else:
+            # name not exist
+            return False
+
+# db = DatabaseController()
+# user = DatabaseController.User("Haocheng","local_host", True, 8888, "game")
+# db.addUser(user)
+# db.editUserData(1, DatabaseController.User.UserDataType.SOCKET_NUMBER, "SO")
+# db.readOneData(1, DatabaseController.User.UserDataType.SOCKET_NUMBER)
