@@ -2,7 +2,9 @@ import yaml
 import enum
 
 
-# NOTE: not sure readOneData purpose
+# XXX: not sure readOneData purpose
+# NOTE: Register: addUser() method
+# NOTE: Update user subject of interest: editUserData() method
 
 
 class DatabaseController:
@@ -164,5 +166,5 @@ class DatabaseController:
 # db.addUser(user)
 # db.editUserData(1, DatabaseController.User.UserDataType.SOCKET_NUMBER, "SO")
 # db.readOneData(1, DatabaseController.User.UserDataType.SOCKET_NUMBER)
-# db.readOneData("Haocheng", DatabaseController.User.UserDataType.IP_ADDRESS)
-# db.editUserData("Jack",DatabaseController.User.UserDataType.SOCKET_NUMBER, 1234)
+# db.readOneData("Link", DatabaseController.User.UserDataType.SUBJECT_INTEREST)
+# db.editUserData("Jack",DatabaseController.User.UserDataType.SUBJECT_INTEREST, ['ps5', 'spiderman'])
