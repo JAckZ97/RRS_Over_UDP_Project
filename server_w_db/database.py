@@ -1,7 +1,9 @@
 import yaml
 import enum
 
-# FIXME -> instead of userNum, but userName -> use a for loop to find the user with the name
+
+# NOTE: not sure readOneData purpose
+
 
 class DatabaseController:
     """
@@ -77,43 +79,31 @@ class DatabaseController:
 
         return nameList
 
-    # read the yaml file for one data of a user
-    def readOneData(self, userNum, dataType):
+    # # read the yaml file for one data of a user
+    def readOneData(self, userName, dataType):
         # check if the dataType is valid
         if dataType in self.userData:
-            userID = "user-" + str(userNum)
-
+            # userID = "user-" + str(userNum)
             with open(self.dbFile, "r") as yamlFile:
-                database = yaml.load(yamlFile, Loader=yaml.FullLoader)
-                return database[self.dbName][userID][dataType.value]
-
+                database = yaml.safe_load(yamlFile) 
+                for k, v in database["User"].items():
+                    if userName == database["User"][k]["client_name"]:
+                        # print(database[self.dbName][k][dataType.value])
+                        return database[self.dbName][k][dataType.value]
         else:
             print("invalid dataType")
 
-    # # read the yaml file
-    # def readFile(self):
-    #     with open(self.dbFile, "r") as yamlFile:
-    #         database = yaml.load_all(yamlFile, Loader=yaml.FullLoader)
-    #         for user in database:
-    #             for k, v in user.items():
-    #                 return " ".join(v).encode()
-
-    # # reload the entire yaml file with message (NOT plan to use for now)
-    # def writeFile(self, message):
-    #     # userMessage = {'message': [message.decode('utf-8')]}
-    #     userMessage = {'message': {'name': message}}
-    #     with open(self.dbFile, "w") as yamlFile:
-    #         yaml.dump(userMessage, yamlFile)
-
     # edit user data
-    def editUserData(self, userNum, dataType, newData):
+    def editUserData(self, userName, dataType, newData):
         # only edit if dataType valid and we are not changing a name
         if dataType in self.userData:
             if dataType != self.User.UserDataType.CLIENT_NAME:
                 # read current database
                 with open(self.dbFile,'r') as yamlfile:
                     databaseUpdate = yaml.safe_load(yamlfile) # Note the safe_load
-                    databaseUpdate['User']["user-"+str(userNum)][dataType.value] = newData
+                    for k, v in databaseUpdate["User"].items():
+                        if userName == databaseUpdate["User"][k]["client_name"]:
+                            databaseUpdate[self.dbName][k][dataType.value] = newData
 
                     if databaseUpdate:
                         with open(self.dbFile,'w') as yamlfile:
@@ -152,8 +142,27 @@ class DatabaseController:
             # name not exist
             return False
 
+    ''' UNUSED METHOD
+    # read the yaml file
+    def readFile(self):
+        with open(self.dbFile, "r") as yamlFile:
+            database = yaml.load_all(yamlFile, Loader=yaml.FullLoader)
+            for user in database:
+                for k, v in user.items():
+                    return " ".join(v).encode()
+
+    # reload the entire yaml file with message (NOT plan to use for now)
+    def writeFile(self, message):
+        # userMessage = {'message': [message.decode('utf-8')]}
+        userMessage = {'message': {'name': message}}
+        with open(self.dbFile, "w") as yamlFile:
+            yaml.dump(userMessage, yamlFile)
+    '''
+
 # db = DatabaseController()
 # user = DatabaseController.User("Haocheng","local_host", True, 8888, "game")
 # db.addUser(user)
 # db.editUserData(1, DatabaseController.User.UserDataType.SOCKET_NUMBER, "SO")
 # db.readOneData(1, DatabaseController.User.UserDataType.SOCKET_NUMBER)
+# db.readOneData("Haocheng", DatabaseController.User.UserDataType.IP_ADDRESS)
+# db.editUserData("Jack",DatabaseController.User.UserDataType.SOCKET_NUMBER, 1234)
