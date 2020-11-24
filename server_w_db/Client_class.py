@@ -31,7 +31,4 @@ class Client:
             else:
                 print("invalid")
 
-cl = Client()
-cl.run()
-
 # FIXME : Client need to connect to the appropriate server
