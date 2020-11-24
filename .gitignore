@@ -134,4 +134,3 @@ udp_project
 yaml
 .vscode
 server_w_db/database_copy.yaml
-server_w_db/test.py
