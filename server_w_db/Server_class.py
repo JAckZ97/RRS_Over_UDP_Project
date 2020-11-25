@@ -16,7 +16,8 @@ class Server:
 
         self.messageFunctions = {
             MessageTypes.SUBJECTS: self.request_subjectInt_update,
-            MessageTypes.SUBJECTS_UPDATED: self.accept_subjectInt_update
+            MessageTypes.SUBJECTS_UPDATED: self.accept_subjectInt_update,
+            MessageTypes.REGISTER: self.register_client
         }
 
         self.stopFlag = False
@@ -31,13 +32,19 @@ class Server:
     def accept_subjectInt_update(self, message):
         pass
 
+    def register_client(self, clientMessage):
+        print("server is registering client")
+        msg = Message(type_ = MessageTypes.REGISTERED, rqNum = clientMessage.rqNum)
+
+        self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
+
     # Class functions
     def listenMsg(self):
         data, addr = self.serverSocket.recvfrom(1024)
         return data, addr
 
-    def sendMsg(self, msg):
-        self.serverSocket.sendto(msg, (self.HOST, self.PORT))
+    def sendMsg(self, msg, host, port):
+        self.serverSocket.sendto(msg, (host, port)) # FIXME : needs to be server host, port no ?
 
     def pause(self):
         print("pausing server -> ", self.name)

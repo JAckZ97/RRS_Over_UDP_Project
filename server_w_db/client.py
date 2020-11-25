@@ -2,8 +2,8 @@ import socket
 import sys
 from message_db import Message, MessageController, MessageTypes
 
-HOST = 'localhost' 
-PORT = 8888 
+HOST = 'localhost'
+PORT = 8888
 
 try :
     client_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

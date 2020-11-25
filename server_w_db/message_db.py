@@ -19,9 +19,11 @@ class MessageTypes(enum.Enum):
 
     # Register
     REGISTER = "register"
+    REGISTERED = "registered"
+    REGISTER_DENIED = "register-denied"
 
 class Message:
-    def __init__(self, type_, rqNum = 0, name = "", ipAddress = "", socketNum = 0, reason = "", subjects = None, text = ""):
+    def __init__(self, type_, rqNum = 0, name = "", ipAddress = "", socketNum = 0, reason = "", subjects = None, text = "", host = "", port = 0):
 
         requestNumber = random.randint(1, 10000)        
         if requestNumber < 0:
@@ -36,6 +38,9 @@ class Message:
         self.reason = reason
         self.subjects = subjects
         self.text = text
+
+        self.host = host
+        self.port = port
 
 class MessageController:
     def __init__(self):

@@ -1,4 +1,3 @@
-from Client_class import Client
 from Server_class import Server
 
 import time
@@ -24,18 +23,20 @@ exitFlag = False
 
 # init servers and clients
 serverA = Server("A", "127.0.0.1", 8888)
-serverB = Server("B", "127.0.0.2", 8888)
+serverB = Server("B", "127.0.0.2", 8887)
 
-# run system
-while not exitFlag:
-    # switch listening server every random minutes
+serverA.run()
+
+# # run system
+# while not exitFlag:
+#     # switch listening server every random minutes
   
-    # time.sleep(random.randint(1,60))
-    time.sleep(3)
+#     # time.sleep(random.randint(1,60))
+#     time.sleep(3)
 
-    switch_server(serverA,serverB)
+#     switch_server(serverA,serverB)
 
-    # time.sleep(random.randint(1,60))
-    time.sleep(4)
+#     # time.sleep(random.randint(1,60))
+#     time.sleep(4)
 
-    switch_server(serverB,serverA)
+#     switch_server(serverB,serverA)

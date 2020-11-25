@@ -90,7 +90,7 @@ class DatabaseController:
                 database = yaml.safe_load(yamlFile) 
                 for k, v in database["User"].items():
                     if userName == database["User"][k]["client_name"]:
-                        # print(database[self.dbName][k][dataType.value])
+                        print(database[self.dbName][k][dataType.value])
                         return database[self.dbName][k][dataType.value]
         else:
             print("invalid dataType")
@@ -166,5 +166,5 @@ class DatabaseController:
 # db.addUser(user)
 # db.editUserData(1, DatabaseController.User.UserDataType.SOCKET_NUMBER, "SO")
 # db.readOneData(1, DatabaseController.User.UserDataType.SOCKET_NUMBER)
-# db.readOneData("Link", DatabaseController.User.UserDataType.SUBJECT_INTEREST)
-# db.editUserData("Jack",DatabaseController.User.UserDataType.SUBJECT_INTEREST, ['ps5', 'spiderman'])
+# db.readOneData("Jack", DatabaseController.User.UserDataType.SUBJECT_INTEREST)
+# db.editUserData("Jack",DatabaseController.User.UserDataType.SUBJECT_INTEREST, ['ps5', 'spiderman','list'])
