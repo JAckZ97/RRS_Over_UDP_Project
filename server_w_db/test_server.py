@@ -1,4 +1,5 @@
 from Server_class import Server
+from globals_ import serverAHost, serverAPort, serverBHost, serverBPort
 
 import time
 import random
@@ -12,6 +13,7 @@ def switch_server(closeServer, runServer):
     runServer.start()
     
     # message clients that server will close and they need to switch
+    # FIXME : NEED TO IMPLEMENT !!!!
 
     # close old server
     closeServer.pause()
@@ -22,12 +24,12 @@ def switch_server(closeServer, runServer):
 exitFlag = False
 
 # init servers and clients
-serverA = Server("A", "127.0.0.1", 8888)
-serverB = Server("B", "127.0.0.2", 8887)
+serverA = Server("A", serverAHost, serverAPort)
+serverB = Server("B", serverBHost, serverBPort)
 
 serverA.run()
 
-# # run system
+# # # run system
 # while not exitFlag:
 #     # switch listening server every random minutes
   

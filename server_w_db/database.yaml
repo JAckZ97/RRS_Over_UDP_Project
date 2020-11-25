@@ -1,32 +1,22 @@
 User:
-  user-1:
-    client_name: Link
-    ip_address: 192.168.0.1
+  -1679514339:
+    client_name: List
+    ip_address: local_host
     register_status: true
     socket_number: 8888
     subject_interest:
     - ps5
     - spiderman
-  user-2:
-    client_name: Jack
-    ip_address: 192.168.0.2
-    register_status: true
-    socket_number: 1234
-    subject_interest:
-    - ps5
-      - text1
-      - text2
-    - spiderman
     - list
-  user-3:
-    client_name: User1
+  922635503:
+    client_name: Philippe
     ip_address: local_host
     register_status: true
     socket_number: 8888
     subject_interest: game
-  user-4:
-    client_name: Haocheng
-    ip_address: 192.168.0.3
+  1303647551:
+    client_name: Jack
+    ip_address: local_host
     register_status: true
     socket_number: 8888
     subject_interest: game

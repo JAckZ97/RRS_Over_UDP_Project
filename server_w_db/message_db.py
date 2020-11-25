@@ -20,7 +20,13 @@ class MessageTypes(enum.Enum):
     # Register
     REGISTER = "register"
     REGISTERED = "registered"
+    DEREGISTER = "deregister"
     REGISTER_DENIED = "register-denied"
+
+    #Update
+    UPDATE = "update"
+    UPDATE_CONFIRMED = "udpate-confirmed"
+    UPDATE_DENIED = "update-denied"
 
 class Message:
     def __init__(self, type_, rqNum = 0, name = "", ipAddress = "", socketNum = 0, reason = "", subjects = None, text = "", host = "", port = 0):
