@@ -33,7 +33,7 @@ class Server:
         pass
 
     def register_client(self, clientMessage):
-        print("server is registering client")
+        print("server is registering client " + clientMessage.name)
         msg = Message(type_ = MessageTypes.REGISTERED, rqNum = clientMessage.rqNum)
 
         self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
@@ -66,7 +66,8 @@ class Server:
                 self.messageFunctions[message.type_](message)
 
             except socket.timeout:
-                print("server time out")
+                # print("server time out")
+                pass
 
             # FIXME : problem is that we cannot close the server, when it is waiting in the listenMsg() function (its blocking)
 

@@ -21,7 +21,7 @@ class Client:
 
     # Message Functions
     def print_registered(self, message):
-        print("I " + self.name + "is registered !")
+        print("I " + self.name + " is registered !")
 
     # Class Functions
     def listenMsg(self):
@@ -46,20 +46,12 @@ class Client:
         while True:
             # data, addr = listenMsg()
 
-            message = input("msg (q to quit): ")
-            messageList = message.split()
+            message = input("msg (q to quit) : ")
 
-            if messageList[0] == MessageTypes.REGISTER.value:
-                print("Client_Name - IP_address - Socket_Number")
+            if message == MessageTypes.REGISTER.value:
                 
-                # msgList = {
-                #         'Client_Name': messageList[1], 
-                #         'IP_address': messageList[2], 
-                #         'Socket_Number': int(messageList[3])
-                #     }
-
-                msg = Message(type_ = MessageTypes.REGISTER, rqNum = 1, name = messageList[1], 
-                    ipAddress = messageList[2], socketNum = int(messageList[3]), host = self.HOST, port = self.PORT)
+                msg = Message(type_ = MessageTypes.REGISTER, rqNum = 1, name = self.name, 
+                    ipAddress = self.HOST, socketNum = self.PORT, host = self.HOST, port = self.PORT)
 
                 self.sendMsg(self.msgControl.serialize(msg))
 
