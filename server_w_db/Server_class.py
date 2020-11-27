@@ -17,7 +17,8 @@ class Server:
         self.messageFunctions = {
             MessageTypes.REGISTER: self.register_client,
             MessageTypes.DEREGISTER: self.deregister_client,
-            MessageTypes.UPDATE: self.update_user_socket_info
+            MessageTypes.UPDATE: self.update_user_socket_info,
+            MessageTypes.SUBJECTS: self.update_user_subject_interest
 
             # MessageTypes.SUBJECTS: self.request_subjectInt_update,
             # MessageTypes.SUBJECTS_UPDATED: self.accept_subjectInt_update,
@@ -25,6 +26,9 @@ class Server:
 
         self.stopFlag = False
         self.serverSocket.settimeout(2) # un-block after 2s
+
+        # List of Possible Subjects
+        self.subjectOfInterests = ["ps", "xbox", "pc", "nintendo", "vr"]
 
     # Message Functions
     # def request_subjectInt_update(self, message):
@@ -35,13 +39,13 @@ class Server:
         accept = self.dbControl.addUser(user)
 
         if accept:
-            print("server " + self.name + " is deregistering client " + clientMessage.name)
-            msg = Message(type_ = MessageTypes.DEREGISTER, rqNum = clientMessage.rqNum)
+            print("server " + self.name + " is registering client " + clientMessage.name)
+            msg = Message(type_ = MessageTypes.REGISTERED, rqNum = clientMessage.rqNum)
 
             self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
 
         else:
-            print("server " + self.name + " denied deregistering client " + clientMessage.name)
+            print("server " + self.name + " denied registering client " + clientMessage.name)
             msg = Message(type_ = MessageTypes.REGISTER_DENIED, rqNum = clientMessage.rqNum, reason = "user exists already")
 
             self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
@@ -73,6 +77,39 @@ class Server:
             msg = Message(type_ = MessageTypes.UPDATE_DENIED, rqNum = clientMessage.rqNum, reason = " name is not in database")
             self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
 
+
+    def update_user_subject_interest(self, clientMessage):
+        
+        nameExistFlag = False
+        if self.dbControl.checkExistUser(clientMessage.name):
+            nameExistFlag = True
+
+        denyFlag = False
+        # check if subject given by client is available
+        for val in clientMessage.subjects:
+            if val not in self.subjectOfInterests:
+                denyFlag = True
+
+        if not denyFlag and nameExistFlag:
+            print("server " + self.name + " update subject of interest " + clientMessage.name)
+            msg = Message(type_ = MessageTypes.SUBJECTS_UPDATED, rqNum = clientMessage.rqNum, name = clientMessage.name, subjects = clientMessage.subjects)
+            self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
+            self.dbControl.editUserData(clientMessage.name, DatabaseController.User.UserDataType.SUBJECT_INTEREST, clientMessage.subjects)
+
+        elif denyFlag and not nameExistFlag:
+            print("server " + self.name + " reject update subject of interest " + clientMessage.name)
+            msg = Message(type_ = MessageTypes.SUBJECTS_REJECTED, rqNum = clientMessage.rqNum, name = clientMessage.name, reason = " At least one subject is not in database and the user is not registered")
+            self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
+
+        elif not denyFlag and not nameExistFlag:
+            print("server " + self.name + " reject update subject of interest " + clientMessage.name)
+            msg = Message(type_ = MessageTypes.SUBJECTS_REJECTED, rqNum = clientMessage.rqNum, name = clientMessage.name, reason = " User is not registered in the database")
+            self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
+
+        else:
+            print("server " + self.name + " reject update subject of interest " + clientMessage.name)
+            msg = Message(type_ = MessageTypes.SUBJECTS_REJECTED, rqNum = clientMessage.rqNum, name = clientMessage.name, reason = " At least one subject is not in database")
+            self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
 
     # Class functions
     def listenMsg(self):

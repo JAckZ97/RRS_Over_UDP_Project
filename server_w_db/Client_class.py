@@ -19,6 +19,8 @@ class Client:
             MessageTypes.REGISTER_DENIED: self.print_registered_denied,
             MessageTypes.UPDATE_CONFIRMED: self.print_updated_socket_info,
             MessageTypes.UPDATE_DENIED: self.print_updated_socket_info_denied,
+            MessageTypes.SUBJECTS_UPDATED:self.print_updated_soi,
+            MessageTypes.SUBJECTS_REJECTED:self.print_updated_soi_denied
         }
 
         self.serverHost = ""
@@ -40,6 +42,13 @@ class Client:
 
     def print_updated_socket_info_denied(self, message):
         print("I " + self.name + " is updated denied !")
+
+    def print_updated_soi(self, message):
+        print("I " + self.name + " SOI is updated !")
+
+    def print_updated_soi_denied(self, message):
+        print("I " + self.name + " SOI is denied !")
+        print(message.reason)
 
     # Class Functions
     def listenMsg(self):
@@ -87,7 +96,7 @@ class Client:
         listenThread.start()
 
     def msg_thread(self):
-        options = ["register", "update", "deregister"]
+        options = ["register", "update", "deregister", "subject"]
         print("here are the options : ", options)
 
         while True:
@@ -114,7 +123,16 @@ class Client:
 
             elif message == MessageTypes.DEREGISTER.value:
                 
-                msg = Message(type_ = MessageTypes.DEREGISTER, rqNum = 1, name = self.name)
+                msg = Message(type_ = MessageTypes.DEREGISTER, rqNum = 1, name = self.name, host = self.HOST, port = self.PORT)
+
+                self.sendMsg(self.msgControl.serialize(msg))
+
+            elif message == MessageTypes.SUBJECTS.value:
+                print(["ps", "xbox", "pc", "nintendo", "vr"])
+                subjects = input(" subcribe to ? (put space in between) : ")
+                subjects = subjects.split()
+    
+                msg = Message(type_ = MessageTypes.SUBJECTS, rqNum = 1, name = self.name, subjects = subjects, host = self.HOST, port = self.PORT)
 
                 self.sendMsg(self.msgControl.serialize(msg))
 

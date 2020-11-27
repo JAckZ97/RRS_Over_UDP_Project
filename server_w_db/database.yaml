@@ -1,4 +1,27 @@
+SOI:
+  ps:
+  - default
+  xbox:
+  - default
+  pc:
+  - default
+  nintendo:
+  - default
+  vr:
+  - default
 User:
+  -8569050878720937394:
+    client_name: HAOCHENG
+    ip_address: 127.0.0.10
+    register_status: false
+    socket_number: 8888
+    subject_interest: ''
+  -1087307508706077920:
+    client_name: JACK
+    ip_address: 127.0.0.11
+    register_status: false
+    socket_number: 8888
+    subject_interest: ''
   -1679514339:
     client_name: List
     ip_address: local_host
