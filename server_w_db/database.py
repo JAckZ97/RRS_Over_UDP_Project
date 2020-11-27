@@ -26,12 +26,13 @@ class DatabaseController:
             SOCKET_NUMBER = "socket_number"
             SUBJECT_INTEREST = "subject_interest"
 
-        def __init__(self, name, ipAdd, regStat, sockNum, subjInts):
+        def __init__(self, name, ipAdd, regStat, sockNum, subjInts, subjText):
             self.name = name
             self.ipAdd = ipAdd
             self.regStat = regStat
             self.sockNum = sockNum
             self.subjInts = subjInts
+            self.sebjText = subjText
 
             self.userData = {
                 self.UserDataType.CLIENT_NAME.value: self.name,
@@ -47,6 +48,7 @@ class DatabaseController:
     def __init__(self):
         self.dbFile = "database.yaml"
         self.dbName = "User"
+        self.dbSOI = "SOI"
         self.userData = [
             self.User.UserDataType.CLIENT_NAME,
             self.User.UserDataType.IP_ADDRESS,
@@ -75,7 +77,6 @@ class DatabaseController:
         nameList = []
         with open(self.dbFile,'r') as yamlfile:
             database = yaml.safe_load(yamlfile)
-            nameList = []
             for k, v in database[self.dbName].items():
                 nameList.append(database[self.dbName][k][self.User.UserDataType.CLIENT_NAME.value])
 
@@ -164,12 +165,33 @@ class DatabaseController:
 
     # check the exist user by user name
     def checkExistUser(self, name):
+        self.userNameList = self.get_existing_users()
         # name exist
         if name in self.userNameList:
             return True
         else:
             # name not exist
             return False
+    
+    def addMessage(self, subjInt, subjText):
+        InterestFound = False
+
+        with open(self.dbFile,'r') as yamlfile:
+            databaseUpdate = yaml.safe_load(yamlfile) # Note the safe_load
+            for k, v in databaseUpdate[self.dbSOI].items():
+                if subjInt == k:
+                    dataList = []
+                    dataList.extend(databaseUpdate[self.dbSOI][k]) # FIXME : assuming the data in databse is a list
+                    dataList.append(subjText)
+                    databaseUpdate[self.dbSOI][k] = dataList
+                    InterestFound = True
+            if not InterestFound:
+                print("SOI is not on the list. ")
+
+            if databaseUpdate:
+                with open(self.dbFile,'w') as yamlfile:
+                    yaml.safe_dump(databaseUpdate, yamlfile) # Also note the safe_dump
+
 
     ''' UNUSED METHOD
     # read the yaml file
@@ -194,3 +216,4 @@ class DatabaseController:
 # db.deletUser("Haocheng")
 # db.readOneData("List", DatabaseController.User.UserDataType.SUBJECT_INTEREST)
 # db.editUserData("List",DatabaseController.User.UserDataType.SUBJECT_INTEREST, ['ps5', 'spiderman','list'])
+# db.addMessage("vr",['Text1', 'Text2','Text3'] )

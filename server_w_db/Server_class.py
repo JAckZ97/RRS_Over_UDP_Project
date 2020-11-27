@@ -18,9 +18,8 @@ class Server:
             MessageTypes.REGISTER: self.register_client,
             MessageTypes.DEREGISTER: self.deregister_client,
             MessageTypes.UPDATE: self.update_user_socket_info,
-            MessageTypes.SUBJECTS: self.update_user_subject_interest
-
-            # MessageTypes.SUBJECTS: self.request_subjectInt_update,
+            MessageTypes.SUBJECTS: self.update_user_subject_interest,
+            MessageTypes.PUBLISH: self.request_publish
             # MessageTypes.SUBJECTS_UPDATED: self.accept_subjectInt_update,
         }
 
@@ -35,7 +34,7 @@ class Server:
     #     self.dbControl.editUserData(1, DatabaseController.User.UserDataType.SUBJECT_INTEREST, message.subjects)
 
     def register_client(self, clientMessage):
-        user = DatabaseController.User(clientMessage.name, clientMessage.host, False, clientMessage.port, "")
+        user = DatabaseController.User(clientMessage.name, clientMessage.host, False, clientMessage.port, "", "")
         accept = self.dbControl.addUser(user)
 
         if accept:
@@ -50,7 +49,6 @@ class Server:
 
             self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
 
-
     def deregister_client(self, clientMessage):
         accept = self.dbControl.deleteUser(clientMessage.name)
 
@@ -60,7 +58,6 @@ class Server:
 
         else:
             pass
-
 
     def update_user_socket_info(self, clientMessage):
         resultA = self.dbControl.editUserData(clientMessage.name, DatabaseController.User.UserDataType.IP_ADDRESS, clientMessage.ipAddress)
@@ -109,6 +106,37 @@ class Server:
         else:
             print("server " + self.name + " reject update subject of interest " + clientMessage.name)
             msg = Message(type_ = MessageTypes.SUBJECTS_REJECTED, rqNum = clientMessage.rqNum, name = clientMessage.name, reason = " At least one subject is not in database")
+            self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
+
+    def request_publish(self, clientMessage):
+
+        if self.dbControl.checkExistUser(clientMessage.name):
+            if clientMessage.subjects[0] in self.subjectOfInterests: # assuming only 1 subject passed
+
+                # add news to database SOI
+                self.dbControl.addMessage(clientMessage.subjects[0], clientMessage.text)
+
+                # send messages to users
+                usersNames = self.dbControl.get_existing_users()
+                for userName in usersNames:
+                    userSOIs = self.dbControl.readOneData(userName, DatabaseController.User.UserDataType.SUBJECT_INTEREST)
+                    userHost = self.dbControl.readOneData(userName, DatabaseController.User.UserDataType.IP_ADDRESS)
+                    userPort = self.dbControl.readOneData(userName, DatabaseController.User.UserDataType.SOCKET_NUMBER) # FIXME -> not sure if it returns an int
+                    if clientMessage.subjects[0] in userSOIs:
+                        print("server " + self.name + " message news " + userName)
+                        msg = Message(type_ = MessageTypes.MESSAGE, name = userName, subjects =  clientMessage.subjects[0], text = clientMessage.text)
+                        self.sendMsg(self.msgControl.serialize(msg), userHost, userPort)
+
+            else:
+                # send to message user that it was denied
+                print("server " + self.name + " reject publish news " + clientMessage.name)
+                msg = Message(type_ = MessageTypes.PUBLISH_DENIED, rqNum = clientMessage.rqNum, reason = "subject is not in database")
+                self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
+
+        else:
+            # send to message user that it was denied
+            print("server " + self.name + " reject publish news " + clientMessage.name)
+            msg = Message(type_ = MessageTypes.PUBLISH_DENIED, rqNum = clientMessage.rqNum, reason = "user is not registered in the database")
             self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
 
     # Class functions

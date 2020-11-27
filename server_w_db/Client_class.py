@@ -20,7 +20,9 @@ class Client:
             MessageTypes.UPDATE_CONFIRMED: self.print_updated_socket_info,
             MessageTypes.UPDATE_DENIED: self.print_updated_socket_info_denied,
             MessageTypes.SUBJECTS_UPDATED:self.print_updated_soi,
-            MessageTypes.SUBJECTS_REJECTED:self.print_updated_soi_denied
+            MessageTypes.SUBJECTS_REJECTED:self.print_updated_soi_denied,
+            MessageTypes.MESSAGE:self.print_publish_message,
+            MessageTypes.PUBLISH_DENIED:self.print_publish_denied
         }
 
         self.serverHost = ""
@@ -48,6 +50,13 @@ class Client:
 
     def print_updated_soi_denied(self, message):
         print("I " + self.name + " SOI is denied !")
+        print(message.reason)
+
+    def print_publish_message(self, message):
+        print("I " + self.name + " receive message " + message.text)
+
+    def print_publish_denied(self, message):
+        print("I " + self.name + " publish is denied !")
         print(message.reason)
 
     # Class Functions
@@ -96,7 +105,7 @@ class Client:
         listenThread.start()
 
     def msg_thread(self):
-        options = ["register", "update", "deregister", "subject"]
+        options = ["register", "update", "deregister", "subject", "publish"]
         print("here are the options : ", options)
 
         while True:
@@ -136,6 +145,22 @@ class Client:
 
                 self.sendMsg(self.msgControl.serialize(msg))
 
+            elif message == MessageTypes.PUBLISH.value:
+                print("What subject do you want to publish on:")
+                print(["ps", "xbox", "pc", "nintendo", "vr"])
+                subjects = input("Subject: ")
+                subjects = subjects.split()
+
+                if len(subjects) > 1:
+                    print("too many subjects")
+
+                else:
+                    print("What do you want to publish")
+                    news = input("News: ")
+                    msg = Message(type_ = MessageTypes.PUBLISH, rqNum = 1, name = self.name, subjects = subjects, text = news,  host = self.HOST, port = self.PORT)
+
+                    self.sendMsg(self.msgControl.serialize(msg))
+                
             else:
                 print("invalid choice")
                 

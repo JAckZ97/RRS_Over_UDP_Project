@@ -1,45 +1,40 @@
 SOI:
-  ps:
-  - default
-  xbox:
+  nintendo:
   - default
   pc:
   - default
-  nintendo:
-  - default
+  - new pc
+  - new pc 1
+  - new pc 11
+  - new pc 4
+  ps:
+  - Text1
+  - Text2
+  - Text3
   vr:
+  - Text1
+  - Text2
+  - Text3
+  xbox:
   - default
 User:
-  -8569050878720937394:
-    client_name: HAOCHENG
-    ip_address: 127.0.0.10
-    register_status: false
-    socket_number: 8888
-    subject_interest: ''
   -1087307508706077920:
     client_name: JACK
     ip_address: 127.0.0.11
     register_status: false
     socket_number: 8888
+    subject_interest:
+    - pc
+  -1842467073:
+    client_name: PHIL
+    ip_address: 127.0.0.12
+    register_status: false
+    socket_number: 8888
     subject_interest: ''
-  -1679514339:
-    client_name: List
-    ip_address: local_host
-    register_status: true
+  863709596:
+    client_name: HAOCHENG
+    ip_address: 127.0.0.10
+    register_status: false
     socket_number: 8888
     subject_interest:
-    - ps5
-    - spiderman
-    - list
-  922635503:
-    client_name: Philippe
-    ip_address: local_host
-    register_status: true
-    socket_number: 8888
-    subject_interest: game
-  1303647551:
-    client_name: Jack
-    ip_address: local_host
-    register_status: true
-    socket_number: 8888
-    subject_interest: game
+    - pc

@@ -28,6 +28,11 @@ class MessageTypes(enum.Enum):
     UPDATE_CONFIRMED = "udpate-confirmed"
     UPDATE_DENIED = "update-denied"
 
+    #Publish
+    PUBLISH = "publish"
+    MESSAGE = "message"
+    PUBLISH_DENIED = "publish-denied"
+
 class Message:
     def __init__(self, type_, rqNum = 0, name = "", ipAddress = "", socketNum = 0, reason = "", subjects = None, text = "", host = "", port = 0):
 
