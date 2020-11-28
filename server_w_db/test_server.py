@@ -27,18 +27,18 @@ exitFlag = False
 serverA = Server("A", serverAHost, serverAPort)
 serverB = Server("B", serverBHost, serverBPort)
 
-serverA.run()
+# serverA.run()
 
-# # # run system
-# while not exitFlag:
-#     # switch listening server every random minutes
-  
-#     # time.sleep(random.randint(1,60))
-#     time.sleep(3)
+# # run system
+while not exitFlag:
+    # switch listening server every random minutes
 
-#     switch_server(serverA,serverB)
+    # time.sleep(random.randint(1,60))
+    time.sleep(3)
 
-#     # time.sleep(random.randint(1,60))
-#     time.sleep(4)
+    switch_server(serverA,serverB)
 
-#     switch_server(serverB,serverA)
+    # time.sleep(random.randint(1,60))
+    time.sleep(4)
+
+    switch_server(serverB,serverA)

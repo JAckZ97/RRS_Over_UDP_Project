@@ -166,6 +166,7 @@ class DatabaseController:
     # check the exist user by user name
     def checkExistUser(self, name):
         self.userNameList = self.get_existing_users()
+        
         # name exist
         if name in self.userNameList:
             return True
