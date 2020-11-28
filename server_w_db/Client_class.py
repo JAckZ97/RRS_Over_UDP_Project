@@ -22,7 +22,9 @@ class Client:
             MessageTypes.SUBJECTS_UPDATED:self.print_updated_soi,
             MessageTypes.SUBJECTS_REJECTED:self.print_updated_soi_denied,
             MessageTypes.MESSAGE:self.print_publish_message,
-            MessageTypes.PUBLISH_DENIED:self.print_publish_denied
+            MessageTypes.PUBLISH_DENIED:self.print_publish_denied,
+            MessageTypes.CHANGE_SERVER: self.switch_server,
+            MessageTypes.PING: self.ping_test
         }
 
         self.serverHost = ""
@@ -33,6 +35,19 @@ class Client:
         self.clientSocket.settimeout(1) # un-block after 1s
 
     # Message Functions
+    def ping_test(self, message):
+        print("PING test succeed with server " + message.text)
+
+    def switch_server(self, message):
+        # stop listening
+        self.stopListenFlag = True
+
+        self.serverHost = message.ipAddress
+        self.serverPort = message.socketNum
+
+        # resume listening
+        self.stopListenFlag = False
+
     def print_registered(self, message):
         print("I " + self.name + " is registered !")
 
@@ -105,7 +120,7 @@ class Client:
         listenThread.start()
 
     def msg_thread(self):
-        options = ["register", "update", "deregister", "subject", "publish"]
+        options = ["register", "update", "deregister", "subject", "publish", "ping"]
         print("here are the options : ", options)
 
         while True:
@@ -160,6 +175,11 @@ class Client:
                     msg = Message(type_ = MessageTypes.PUBLISH, rqNum = 1, name = self.name, subjects = subjects, text = news,  host = self.HOST, port = self.PORT)
 
                     self.sendMsg(self.msgControl.serialize(msg))
+
+            elif message == MessageTypes.PING.value:
+                print("PING sent")
+                msg = Message(type_ = MessageTypes.PING, rqNum = 1, name = self.name, host = self.HOST, port = self.PORT)
+                self.sendMsg(self.msgControl.serialize(msg))
                 
             else:
                 print("invalid choice")

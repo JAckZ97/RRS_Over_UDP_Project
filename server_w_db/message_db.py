@@ -33,6 +33,12 @@ class MessageTypes(enum.Enum):
     MESSAGE = "message"
     PUBLISH_DENIED = "publish-denied"
 
+    #Sever Switching
+    CHANGE_SERVER = "change-server"
+
+    # Ping Test
+    PING = "ping"
+
 class Message:
     def __init__(self, type_, rqNum = 0, name = "", ipAddress = "", socketNum = 0, reason = "", subjects = None, text = "", host = "", port = 0):
 

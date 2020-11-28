@@ -20,8 +20,8 @@ class Server:
             MessageTypes.DEREGISTER: self.deregister_client,
             MessageTypes.UPDATE: self.update_user_socket_info,
             MessageTypes.SUBJECTS: self.update_user_subject_interest,
-            MessageTypes.PUBLISH: self.request_publish
-            # MessageTypes.SUBJECTS_UPDATED: self.accept_subjectInt_update,
+            MessageTypes.PUBLISH: self.request_publish,
+            MessageTypes.PING: self.ping_test
         }
 
         self.stopFlag = False
@@ -33,6 +33,11 @@ class Server:
     # Message Functions
     # def request_subjectInt_update(self, message):
     #     self.dbControl.editUserData(1, DatabaseController.User.UserDataType.SUBJECT_INTEREST, message.subjects)
+
+    def ping_test(self, clientMessage):
+        print("server " + self.name + " ping test client " + clientMessage.name)
+        msg = Message(type_ = MessageTypes.PING, text = self.name)
+        self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
 
     def register_client(self, clientMessage):
         user = DatabaseController.User(clientMessage.name, clientMessage.host, False, clientMessage.port, "", "")
@@ -141,6 +146,18 @@ class Server:
             self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
 
     # Class functions
+    def server_switch_msg(self, newServer):
+        # send to message user that it was denied
+        print("server " + self.name + " switch to " + newServer.name)
+
+        # send messages to users
+        usersNames = self.dbControl.get_existing_users()
+        for userName in usersNames:
+            userHost = self.dbControl.readOneData(userName, DatabaseController.User.UserDataType.IP_ADDRESS)
+            userPort = self.dbControl.readOneData(userName, DatabaseController.User.UserDataType.SOCKET_NUMBER) # FIXME -> not sure if it returns an int
+            msg = Message(type_ = MessageTypes.CHANGE_SERVER, ipAddress = newServer.HOST, socketNum = newServer.PORT)
+            self.sendMsg(self.msgControl.serialize(msg), userHost, userPort)
+
     def listenMsg(self):
         data, addr = self.serverSocket.recvfrom(1024)
         return data, addr
