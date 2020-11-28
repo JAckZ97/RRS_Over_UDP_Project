@@ -1,3 +1,4 @@
+import select
 import socket
 import threading
 from message_db import Message, MessageController, MessageTypes
@@ -24,7 +25,7 @@ class Server:
         }
 
         self.stopFlag = False
-        self.serverSocket.settimeout(2) # un-block after 2s
+        self.serverSocket.settimeout(0.1) # un-block after 2s
 
         # List of Possible Subjects
         self.subjectOfInterests = ["ps", "xbox", "pc", "nintendo", "vr"]
@@ -172,7 +173,33 @@ class Server:
             # FIXME : problem is that we cannot close the server, when it is waiting in the listenMsg() function (its blocking)
 
     def start(self):
+        # FIXME : the problem is that when a server gets reconnected, it will listenMsg to any msg in the input buffer
+        # -> therefore, we need to empty the socket.
+        # -> the below function seems to be working, but if we do it at a "tipping" point, when its switching server,
+        # -> both servers receives it
+        # NOTE : after some more trial/error -> it seems the source of the problem why sometimes the two servers were responding is because of the "timeout"
+        # -> the timeout is actually preventing the server to "close" for x amount of seconds, therefore
+        # -> there is a small gap time, where actually both servers are listening and active (gap time == timeout)
+        # self.empty_socket(self.serverSocket)
+        self.clear_buffer(self.serverSocket)
+
         serverThread = threading.Thread(target=self.run)
         serverThread.start()
 
         # NOTE : in theory, the thread ends when we "pause" the server, so dont need thread.join() ?
+
+    # NOTE : 2 different ways to empty input buffer
+    def empty_socket(self, sock):
+        # https://stackoverflow.com/questions/1097974/how-to-empty-a-socket-in-python
+        """remove the data present on the socket"""
+        input = [sock]
+        while 1:
+            inputready, o, e = select.select(input,[],[], 0.0)
+            if len(inputready)==0: break
+            for s in inputready: s.recv(1)
+
+    def clear_buffer(self, sock):
+        try:
+            while sock.recv(1024): pass
+        except:
+            pass
