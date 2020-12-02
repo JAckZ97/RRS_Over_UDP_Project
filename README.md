@@ -8,3 +8,6 @@ Communication Networks and Protocols Project
 ```
 pip install pyyaml
 ```
+## Resources
+Really good tutorial
+https://docs.python.org/3/howto/sockets.html

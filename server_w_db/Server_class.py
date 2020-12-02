@@ -6,14 +6,16 @@ from database import DatabaseController
 
 class Server:
 
-    def __init__(self, name, host = 'localhost', port = 8888):
+    def __init__(self, name, host = 'localhost', port = 8888, databaseFilePath = ""):
         self.name = name
         self.HOST = host
         self.PORT = port
         self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+        # FIXME : here we are basically saying we are listening only to self.HOST network address
         self.serverSocket.bind((self.HOST, self.PORT))
         self.msgControl = MessageController()
-        self.dbControl = DatabaseController()
+        self.dbControl = DatabaseController(databaseFilePath)
 
         self.messageFunctions = {
             MessageTypes.REGISTER: self.register_client,
@@ -149,7 +151,9 @@ class Server:
     def server_switch_msg(self, newServer):
         # send to message user that it was denied
         print("server " + self.name + " switch to " + newServer.name)
-
+        
+        # FIXME : here we need to check if the users are connected before we send a message to them !!! or else will have error
+        # however, the error is only seen on WINDOWS
         # send messages to users
         usersNames = self.dbControl.get_existing_users()
         for userName in usersNames:

@@ -6,7 +6,6 @@ import enum
 # NOTE: Register: addUser() method
 # NOTE: Update user subject of interest: editUserData() method
 
-
 class DatabaseController:
     """
     structure of the database
@@ -45,8 +44,8 @@ class DatabaseController:
         def get_data(self):
             return self.userData
 
-    def __init__(self):
-        self.dbFile = "database.yaml"
+    def __init__(self, databaseFilePath):
+        self.dbFile = databaseFilePath
         self.dbName = "User"
         self.dbSOI = "SOI"
         self.userData = [

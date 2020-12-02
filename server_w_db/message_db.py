@@ -5,13 +5,6 @@ import enum
 import random
 
 class MessageTypes(enum.Enum):
-    # Default = "default"
-    # Register = "register"
-    # Deregister = "deregister"
-    # Registered = "registered"
-    # RegisterDenied = "register-denied"
-    # Update = "update"
-
     # Subject of interests
     SUBJECTS = "subject"
     SUBJECTS_UPDATED = "subject-updated"

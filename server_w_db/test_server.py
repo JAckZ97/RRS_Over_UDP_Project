@@ -1,5 +1,6 @@
 from Server_class import Server
 from globals_ import serverAHost, serverAPort, serverBHost, serverBPort
+from globals_ import databaseAFilePath, databaseBFilePath
 
 import time
 import random
@@ -25,21 +26,24 @@ def switch_server(closeServer, runServer):
 exitFlag = False
 
 # init servers and clients
-serverA = Server("A", serverAHost, serverAPort)
-serverB = Server("B", serverBHost, serverBPort)
+serverA = Server("A", serverAHost, serverAPort, databaseAFilePath)
+serverB = Server("B", serverBHost, serverBPort, databaseBFilePath)
 
-serverA.run()
+# serverA.run()
 
-# # # run system
-# while not exitFlag:
-#     # switch listening server every random minutes
+# # run system
+while not exitFlag:
+    # switch listening server every random minutes
 
-#     # time.sleep(random.randint(1,60))
-#     time.sleep(1)
+    # NOTE : Server A starts first
 
-#     switch_server(serverA,serverB)
+    # time.sleep(random.randint(1,60))
 
-#     # time.sleep(random.randint(1,60))
-#     time.sleep(1)
+    switch_server(serverA,serverB)
 
-#     switch_server(serverB,serverA)
+    # time.sleep(random.randint(1,60))
+    time.sleep(4)
+
+    switch_server(serverB,serverA)
+
+    time.sleep(3)

@@ -28,4 +28,5 @@ User:
     ip_address: 127.0.0.10
     register_status: false
     socket_number: 8888
-    subject_interest: ''
+    subject_interest:
+    - nintendo
