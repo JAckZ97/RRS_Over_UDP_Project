@@ -29,6 +29,10 @@ exitFlag = False
 serverA = Server("A", serverAHost, serverAPort, databaseAFilePath)
 serverB = Server("B", serverBHost, serverBPort, databaseBFilePath)
 
+# letting server know each other
+serverA.set_otherServer(serverB)
+serverB.set_otherServer(serverA)
+
 # serverA.run()
 
 # # run system

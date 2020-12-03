@@ -15,6 +15,7 @@ class MessageTypes(enum.Enum):
     REGISTERED = "registered"
     DEREGISTER = "deregister"
     REGISTER_DENIED = "register-denied"
+    DEREGISTERED = "deregistered"
 
     #Update
     UPDATE = "update"
@@ -33,7 +34,7 @@ class MessageTypes(enum.Enum):
     PING = "ping"
 
 class Message:
-    def __init__(self, type_, rqNum = 0, name = "", ipAddress = "", socketNum = 0, reason = "", subjects = None, text = "", host = "", port = 0):
+    def __init__(self, type_, rqNum = 0, name = "", ipAddress = "", socketNum = 0, reason = "", subjects = None, text = "", host = "", port = 0, isServer = False):
 
         requestNumber = random.randint(1, 10000)        
         if requestNumber < 0:
@@ -51,6 +52,8 @@ class Message:
 
         self.host = host
         self.port = port
+
+        self.isServer = isServer
 
 class MessageController:
     def __init__(self):

@@ -12,6 +12,8 @@ class Server:
         self.PORT = port
         self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+        self.otherServer = None
+
         # FIXME : here we are basically saying we are listening only to self.HOST network address
         self.serverSocket.bind((self.HOST, self.PORT))
         self.msgControl = MessageController()
@@ -23,19 +25,24 @@ class Server:
             MessageTypes.UPDATE: self.update_user_socket_info,
             MessageTypes.SUBJECTS: self.update_user_subject_interest,
             MessageTypes.PUBLISH: self.request_publish,
-            MessageTypes.PING: self.ping_test
+            MessageTypes.PING: self.ping_test,
+
+            MessageTypes.REGISTERED: self.register_client_paused,
+            MessageTypes.REGISTER_DENIED: self.register_denied_paused,
+            MessageTypes.DEREGISTERED: self.deregister_client_paused,
         }
 
+        self.listenClient = True
         self.stopFlag = False
         self.serverSocket.settimeout(0.1) # un-block after 2s
 
         # List of Possible Subjects
         self.subjectOfInterests = ["ps", "xbox", "pc", "nintendo", "vr"]
 
-    # Message Functions
-    # def request_subjectInt_update(self, message):
-    #     self.dbControl.editUserData(1, DatabaseController.User.UserDataType.SUBJECT_INTEREST, message.subjects)
+    def set_otherServer(self, otherServer):
+        self.otherServer = otherServer
 
+    # Message Functions
     def ping_test(self, clientMessage):
         print("server " + self.name + " ping test client " + clientMessage.name)
         msg = Message(type_ = MessageTypes.PING, text = self.name)
@@ -47,25 +54,45 @@ class Server:
 
         if accept:
             print("server " + self.name + " is registering client " + clientMessage.name)
-            msg = Message(type_ = MessageTypes.REGISTERED, rqNum = clientMessage.rqNum)
 
+            # send to client
+            msg = Message(type_ = MessageTypes.REGISTERED, rqNum = clientMessage.rqNum)
             self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
+
+            # send to other server
+            msg = Message(type_ = MessageTypes.REGISTERED, name=clientMessage.name, host=clientMessage.host, port=clientMessage.port, isServer=True)
+            self.sendMsg(self.msgControl.serialize(msg), self.otherServer.HOST, self.otherServer.PORT)
 
         else:
             print("server " + self.name + " denied registering client " + clientMessage.name)
+            # send to client
             msg = Message(type_ = MessageTypes.REGISTER_DENIED, rqNum = clientMessage.rqNum, reason = "user exists already")
-
             self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
+
+            # send to other server
+            msg = Message(type_ = MessageTypes.REGISTER_DENIED, name = clientMessage.name, isServer=True)
+            self.sendMsg(self.msgControl.serialize(msg), self.otherServer.HOST, self.otherServer.PORT)
+
+    def register_client_paused(self, clientMessage):
+        print("server " + self.name + " ack. register for client " + clientMessage.name)
+        user = DatabaseController.User(clientMessage.name, clientMessage.host, False, clientMessage.port, "", "")
+        accept = self.dbControl.addUser(user)
+
+    def register_denied_paused(self, clientMessage):
+        print("server " + self.name + " ack. register denied for client " + clientMessage.name)
+
+    def deregister_client_paused(self, clientMessage):
+        print("server " + self.name + " ack. deregister for client " + clientMessage.name)
+        accept = self.dbControl.deleteUser(clientMessage.name)
 
     def deregister_client(self, clientMessage):
         accept = self.dbControl.deleteUser(clientMessage.name)
 
         if accept:
             # TODO : send message to other server
-            pass
-
-        else:
-            pass
+            # send to other server
+            msg = Message(type_ = MessageTypes.DEREGISTERED, name = clientMessage.name, isServer=True)
+            self.sendMsg(self.msgControl.serialize(msg), self.otherServer.HOST, self.otherServer.PORT)
 
     def update_user_socket_info(self, clientMessage):
         resultA = self.dbControl.editUserData(clientMessage.name, DatabaseController.User.UserDataType.IP_ADDRESS, clientMessage.ipAddress)
@@ -171,7 +198,8 @@ class Server:
 
     def pause(self):
         print("pausing server -> ", self.name)
-        self.stopFlag = True
+        # self.stopFlag = True
+        self.listenClient = False
 
     def closeServer(self):
         self.serverSocket.shutdown(socket.SHUT_RDWR)
@@ -180,12 +208,18 @@ class Server:
     def run(self):
         # reset flag
         self.stopFlag = False
+        self.listenClient = True
         print("running server -> ", self.name)
         while not self.stopFlag:
             try:
                 data, addr = self.listenMsg()
                 message = self.msgControl.deserialize(data)
-                self.messageFunctions[message.type_](message)
+                
+                # check if message is from client or server
+                if (message.isServer == False) and self.listenClient == False:
+                    pass
+                else:
+                    self.messageFunctions[message.type_](message)
 
             except socket.timeout:
                 # print("server time out")
