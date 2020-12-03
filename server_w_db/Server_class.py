@@ -31,6 +31,7 @@ class Server:
             MessageTypes.REGISTER_DENIED: self.register_denied_paused,
             MessageTypes.DEREGISTERED: self.deregister_client_paused,
             MessageTypes.SUBJECTS_UPDATED: self.update_user_subject_interest_paused,
+            MessageTypes.UPDATE_CONFIRMED: self.update_user_socket_info_paused,
 
             MessageTypes.CONNECT: self.connect_client,
             MessageTypes.CONNECT_FORWARD: self.connect_client_paused,
@@ -94,6 +95,10 @@ class Server:
     def update_user_subject_interest_paused(self, clientMessage):
         print("server " + self.name + " ack. subject update for client " + clientMessage.name)
         self.dbControl.editUserData(clientMessage.name, DatabaseController.User.UserDataType.SUBJECT_INTEREST, clientMessage.subjects)
+    
+    def update_user_socket_info_paused(self, clientMessage):
+        resultA = self.dbControl.editUserData(clientMessage.name, DatabaseController.User.UserDataType.IP_ADDRESS, clientMessage.ipAddress)
+        resultB = self.dbControl.editUserData(clientMessage.name, DatabaseController.User.UserDataType.SOCKET_NUMBER, clientMessage.socketNum)
 
     def deregister_client(self, clientMessage):
         accept = self.dbControl.deleteUser(clientMessage.name)
@@ -113,6 +118,10 @@ class Server:
 
             msg = Message(type_ = MessageTypes.UPDATE_CONFIRMED, rqNum = clientMessage.rqNum, name = clientMessage.name, ipAddress = clientMessage.ipAddress, socketNum = clientMessage.socketNum)
             self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
+
+            # send to other server
+            msg = Message(type_ = MessageTypes.UPDATE_CONFIRMED, name = clientMessage.name, ipAddress = clientMessage.ipAddress, socketNum = clientMessage.socketNum, isServer=True)
+            self.sendMsg(self.msgControl.serialize(msg), self.otherServer.HOST, self.otherServer.PORT)
             
         else:
             print("server " + self.name + " denied update client ip_address and port number " + clientMessage.name)
@@ -213,6 +222,9 @@ class Server:
             if self.check_connection(userName):
                 msg = Message(type_ = MessageTypes.CHANGE_SERVER, ipAddress = newServer.HOST, socketNum = newServer.PORT)
                 self.sendMsg(self.msgControl.serialize(msg), userHost, userPort)
+
+    def clients_online(self):
+        return self.dbControl.get_online_size()
 
     def check_connection(self, userName):
         result = self.dbControl.userIsConnected(userName)

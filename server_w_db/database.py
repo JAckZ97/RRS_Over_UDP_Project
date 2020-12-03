@@ -99,6 +99,18 @@ class DatabaseController:
         result = self.editUserData(userName, self.User.UserDataType.IS_CONNECTED, status)
         return result
 
+    def get_online_size(self):
+        self.userNameList = self.get_existing_users()
+
+        onlineCount = 0
+        for userName in self.userNameList:
+            isConnected = self.readOneData(userName, self.User.UserDataType.IS_CONNECTED)
+
+            if isConnected == True:
+                onlineCount = onlineCount + 1
+
+        return onlineCount
+
     # # read the yaml file for one data of a user
     def readOneData(self, userName, dataType):
         # check if the dataType is valid

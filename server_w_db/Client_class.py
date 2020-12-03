@@ -121,20 +121,31 @@ class Client:
         listenThread.start()
 
     def connect(self):
-        # # tell the server client is connected
-        for i in range(5):
-            msg = Message(type_ = MessageTypes.CONNECT, name = self.name)
-            self.sendMsg(self.msgControl.serialize(msg))
-            time.sleep(0.1)
-            print("connecting ...")
+        msg = Message(type_ = MessageTypes.CONNECT, name = self.name)
+        # self.sendMsg(self.msgControl.serialize(msg))
+        self.clientSocket.sendto(self.msgControl.serialize(msg), (serverAHost, serverAPort)) # FIXME : needs to be server host, port no ?
+        self.clientSocket.sendto(self.msgControl.serialize(msg), (serverBHost, serverBPort)) # FIXME : needs to be server host, port no ?
+
+        # # # tell the server client is connected
+        # for i in range(5):
+        #     msg = Message(type_ = MessageTypes.CONNECT, name = self.name)
+        #     self.sendMsg(self.msgControl.serialize(msg))
+        #     time.sleep(0.01)
+        #     print("connecting ...")
 
     def disconnect(self):
         # # tell the server client to disconnect
-        for i in range(5):
-            msg = Message(type_ = MessageTypes.DISCONNECT, name = self.name)
-            self.sendMsg(self.msgControl.serialize(msg))
-            time.sleep(0.1)
-            print("disconnecting ...")
+        msg = Message(type_ = MessageTypes.DISCONNECT, name = self.name)
+        # self.sendMsg(self.msgControl.serialize(msg))
+
+        self.clientSocket.sendto(self.msgControl.serialize(msg), (serverAHost, serverAPort)) # FIXME : needs to be server host, port no ?
+        self.clientSocket.sendto(self.msgControl.serialize(msg), (serverBHost, serverBPort)) # FIXME : needs to be server host, port no ?
+
+        # for i in range(5):
+        #     msg = Message(type_ = MessageTypes.DISCONNECT, name = self.name)
+        #     self.sendMsg(self.msgControl.serialize(msg))
+        #     time.sleep(0.01)
+        #     print("disconnecting ...")
 
     def msg_thread(self):
         # # tell the server client is connected

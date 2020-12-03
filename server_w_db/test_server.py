@@ -43,6 +43,8 @@ while not exitFlag:
 
     # NOTE : Server A starts first
 
+    # if serverA.clients_online() >= 1: # only switch if there is at leats one client online
+
     switch_server(serverA,serverB)
 
     time.sleep(random.randint(1,3))
@@ -50,3 +52,8 @@ while not exitFlag:
     switch_server(serverB,serverA)
 
     time.sleep(random.randint(1,3))
+
+# FIXME 
+# currently, the only "hiccup" is that when we update the ipaddress + port of the
+# user, we need to manuall;y change it in the test_client
+# again since or else there will be mistmatch with the database one
