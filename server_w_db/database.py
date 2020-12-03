@@ -24,6 +24,7 @@ class DatabaseController:
             REGISTER_STATUS = "register_status"
             SOCKET_NUMBER = "socket_number"
             SUBJECT_INTEREST = "subject_interest"
+            IS_CONNECTED = "is_connected"
 
         def __init__(self, name, ipAdd, regStat, sockNum, subjInts, subjText):
             self.name = name
@@ -32,13 +33,15 @@ class DatabaseController:
             self.sockNum = sockNum
             self.subjInts = subjInts
             self.sebjText = subjText
+            self.isConnected = False
 
             self.userData = {
                 self.UserDataType.CLIENT_NAME.value: self.name,
                 self.UserDataType.IP_ADDRESS.value: self.ipAdd,
                 self.UserDataType.REGISTER_STATUS.value: self.regStat,
                 self.UserDataType.SOCKET_NUMBER.value: self.sockNum,
-                self.UserDataType.SUBJECT_INTEREST.value: self.subjInts
+                self.UserDataType.SUBJECT_INTEREST.value: self.subjInts,
+                self.UserDataType.IS_CONNECTED.value: self.isConnected
             }
 
         def get_data(self):
@@ -53,11 +56,16 @@ class DatabaseController:
             self.User.UserDataType.IP_ADDRESS,
             self.User.UserDataType.REGISTER_STATUS,
             self.User.UserDataType.SOCKET_NUMBER,
-            self.User.UserDataType.SUBJECT_INTEREST
+            self.User.UserDataType.SUBJECT_INTEREST,
+            self.User.UserDataType.IS_CONNECTED
         ]
 
         # get data from database
         self.userNameList = self.get_existing_users()
+
+        # set all user to not connected on startup
+        for userName in self.userNameList:
+            self.setConnected(userName, False)
 
     def setup(self):
         # write a default user to the database to setup the structure
@@ -80,6 +88,16 @@ class DatabaseController:
                 nameList.append(database[self.dbName][k][self.User.UserDataType.CLIENT_NAME.value])
 
         return nameList
+    
+    # is connected
+    def userIsConnected(self, userName):
+        isConnected = self.readOneData(userName, self.User.UserDataType.IS_CONNECTED)
+        return isConnected
+
+    # is connected
+    def setConnected(self, userName, status):
+        result = self.editUserData(userName, self.User.UserDataType.IS_CONNECTED, status)
+        return result
 
     # # read the yaml file for one data of a user
     def readOneData(self, userName, dataType):

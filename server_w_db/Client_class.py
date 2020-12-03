@@ -120,7 +120,26 @@ class Client:
         listenThread = threading.Thread(target=self.listen_thread)
         listenThread.start()
 
+    def connect(self):
+        # # tell the server client is connected
+        for i in range(5):
+            msg = Message(type_ = MessageTypes.CONNECT, name = self.name)
+            self.sendMsg(self.msgControl.serialize(msg))
+            time.sleep(0.1)
+            print("connecting ...")
+
+    def disconnect(self):
+        # # tell the server client to disconnect
+        for i in range(5):
+            msg = Message(type_ = MessageTypes.DISCONNECT, name = self.name)
+            self.sendMsg(self.msgControl.serialize(msg))
+            time.sleep(0.1)
+            print("disconnecting ...")
+
     def msg_thread(self):
+        # # tell the server client is connected
+        self.connect()
+
         options = ["register", "update", "deregister", "subject", "publish", "ping"]
         print("here are the options : ", options)
 
@@ -129,7 +148,10 @@ class Client:
 
             message = input("msg (q to quit) : ")
 
-            if message == MessageTypes.REGISTER.value:
+            if message == "q":
+                break
+
+            elif message == MessageTypes.REGISTER.value:
                 
                 msg = Message(type_ = MessageTypes.REGISTER, rqNum = 1, name = self.name, 
                     ipAddress = self.HOST, socketNum = self.PORT, host = self.HOST, port = self.PORT)
@@ -137,6 +159,9 @@ class Client:
                 self.sendRegisterMsg(self.msgControl.serialize(msg))
                 
             elif message == MessageTypes.UPDATE.value:
+
+                # tell the server to disconnect the client
+                self.disconnect()
                 
                 # update host and port
                 self.update_host_port()
@@ -145,6 +170,9 @@ class Client:
                     ipAddress = self.HOST, socketNum = self.PORT, host = self.HOST, port = self.PORT)
 
                 self.sendMsg(self.msgControl.serialize(msg))
+
+                # tell the server to connect the client
+                self.connect()
 
             elif message == MessageTypes.DEREGISTER.value:
                 

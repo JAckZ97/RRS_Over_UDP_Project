@@ -30,7 +30,12 @@ class Server:
             MessageTypes.REGISTERED: self.register_client_paused,
             MessageTypes.REGISTER_DENIED: self.register_denied_paused,
             MessageTypes.DEREGISTERED: self.deregister_client_paused,
-            MessageTypes.SUBJECTS_UPDATED: self.update_user_subject_interest_paused
+            MessageTypes.SUBJECTS_UPDATED: self.update_user_subject_interest_paused,
+
+            MessageTypes.CONNECT: self.connect_client,
+            MessageTypes.CONNECT_FORWARD: self.connect_client_paused,
+            MessageTypes.DISCONNECT: self.disconnect_client,
+            MessageTypes.DISCONNECT_FORWARD: self.disconnect_client_paused
         }
 
         self.listenClient = True
@@ -204,8 +209,38 @@ class Server:
         for userName in usersNames:
             userHost = self.dbControl.readOneData(userName, DatabaseController.User.UserDataType.IP_ADDRESS)
             userPort = self.dbControl.readOneData(userName, DatabaseController.User.UserDataType.SOCKET_NUMBER) # FIXME -> not sure if it returns an int
-            msg = Message(type_ = MessageTypes.CHANGE_SERVER, ipAddress = newServer.HOST, socketNum = newServer.PORT)
-            self.sendMsg(self.msgControl.serialize(msg), userHost, userPort)
+
+            if self.check_connection(userName):
+                msg = Message(type_ = MessageTypes.CHANGE_SERVER, ipAddress = newServer.HOST, socketNum = newServer.PORT)
+                self.sendMsg(self.msgControl.serialize(msg), userHost, userPort)
+
+    def check_connection(self, userName):
+        result = self.dbControl.userIsConnected(userName)
+        return result
+
+    def connect_client(self, clientMessage):
+        self.dbControl.setConnected(clientMessage.name, True)
+
+        print("connecting client")
+
+        # send to other server
+        msg = Message(type_ = MessageTypes.CONNECT_FORWARD, name = clientMessage.name, isServer=True)
+        self.sendMsg(self.msgControl.serialize(msg), self.otherServer.HOST, self.otherServer.PORT)
+
+    def connect_client_paused(self, message):
+        self.dbControl.setConnected(message.name, True)
+
+    def disconnect_client(self, clientMessage):
+        self.dbControl.setConnected(clientMessage.name, False)
+
+        print("disconnecting client")
+
+        # send to other server
+        msg = Message(type_ = MessageTypes.DISCONNECT_FORWARD, name = clientMessage.name, isServer=True)
+        self.sendMsg(self.msgControl.serialize(msg), self.otherServer.HOST, self.otherServer.PORT)
+
+    def disconnect_client_paused(self, message):
+        self.dbControl.setConnected(message.name, False)
 
     def listenMsg(self):
         data, addr = self.serverSocket.recvfrom(1024)
@@ -215,9 +250,15 @@ class Server:
         self.serverSocket.sendto(msg, (host, port)) # FIXME : needs to be server host, port no ?
 
     def pause(self):
-        print("pausing server -> ", self.name)
+        # print("pausing server -> ", self.name)
         # self.stopFlag = True
         self.listenClient = False
+
+    def resume(self):
+        # print("resume server -> ", self.name)
+        # self.stopFlag = True
+        # self.clear_buffer(self.serverSocket) # NOTE : seems we dont need this anymore
+        self.listenClient = True
 
     def closeServer(self):
         self.serverSocket.shutdown(socket.SHUT_RDWR)
@@ -243,9 +284,6 @@ class Server:
                 # print("server time out")
                 pass
 
-            except:
-                print("mystery")
-
             # FIXME : problem is that we cannot close the server, when it is waiting in the listenMsg() function (its blocking)
 
     def start(self):
@@ -257,8 +295,6 @@ class Server:
         # -> the timeout is actually preventing the server to "close" for x amount of seconds, therefore
         # -> there is a small gap time, where actually both servers are listening and active (gap time == timeout)
         # self.empty_socket(self.serverSocket)
-        self.clear_buffer(self.serverSocket)
-
         serverThread = threading.Thread(target=self.run)
         serverThread.start()
 

@@ -33,6 +33,12 @@ class MessageTypes(enum.Enum):
     # Ping Test
     PING = "ping"
 
+    # Connect
+    CONNECT = "connect"
+    CONNECT_FORWARD = "connect-forward"
+    DISCONNECT = "disconnect"
+    DISCONNECT_FORWARD = "disconnect-forward"
+
 class Message:
     def __init__(self, type_, rqNum = 0, name = "", ipAddress = "", socketNum = 0, reason = "", subjects = None, text = "", host = "", port = 0, isServer = False):
 

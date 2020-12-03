@@ -4,6 +4,7 @@ from globals_ import databaseAFilePath, databaseBFilePath
 
 import time
 import random
+import threading
 
 # methods
 def switch_server(closeServer, runServer):
@@ -11,7 +12,7 @@ def switch_server(closeServer, runServer):
     # runServer : server to replace closed server
 
     # run new server
-    runServer.start()
+    runServer.resume()
     
     # message clients that server will close and they need to switch
     # FIXME : Needs further testing ...
@@ -33,7 +34,8 @@ serverB = Server("B", serverBHost, serverBPort, databaseBFilePath)
 serverA.set_otherServer(serverB)
 serverB.set_otherServer(serverA)
 
-# serverA.run()
+serverA.start()
+serverB.start()
 
 # # run system
 while not exitFlag:
