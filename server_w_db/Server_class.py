@@ -30,6 +30,7 @@ class Server:
             MessageTypes.REGISTERED: self.register_client_paused,
             MessageTypes.REGISTER_DENIED: self.register_denied_paused,
             MessageTypes.DEREGISTERED: self.deregister_client_paused,
+            MessageTypes.SUBJECTS_UPDATED: self.update_user_subject_interest_paused
         }
 
         self.listenClient = True
@@ -85,6 +86,10 @@ class Server:
         print("server " + self.name + " ack. deregister for client " + clientMessage.name)
         accept = self.dbControl.deleteUser(clientMessage.name)
 
+    def update_user_subject_interest_paused(self, clientMessage):
+        print("server " + self.name + " ack. subject update for client " + clientMessage.name)
+        self.dbControl.editUserData(clientMessage.name, DatabaseController.User.UserDataType.SUBJECT_INTEREST, clientMessage.subjects)
+
     def deregister_client(self, clientMessage):
         accept = self.dbControl.deleteUser(clientMessage.name)
 
@@ -127,6 +132,10 @@ class Server:
             msg = Message(type_ = MessageTypes.SUBJECTS_UPDATED, rqNum = clientMessage.rqNum, name = clientMessage.name, subjects = clientMessage.subjects)
             self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
             self.dbControl.editUserData(clientMessage.name, DatabaseController.User.UserDataType.SUBJECT_INTEREST, clientMessage.subjects)
+
+            # send to other server
+            msg = Message(type_ = MessageTypes.SUBJECTS_UPDATED, rqNum = clientMessage.rqNum, name = clientMessage.name, subjects = clientMessage.subjects, isServer=True)
+            self.sendMsg(self.msgControl.serialize(msg), self.otherServer.HOST, self.otherServer.PORT)
 
         elif denyFlag and not nameExistFlag:
             print("server " + self.name + " reject update subject of interest " + clientMessage.name)

@@ -41,13 +41,10 @@ while not exitFlag:
 
     # NOTE : Server A starts first
 
-    # time.sleep(random.randint(1,60))
-
     switch_server(serverA,serverB)
 
-    # time.sleep(random.randint(1,60))
-    time.sleep(4)
+    time.sleep(random.randint(1,3))
 
     switch_server(serverB,serverA)
 
-    time.sleep(3)
+    time.sleep(random.randint(1,3))
