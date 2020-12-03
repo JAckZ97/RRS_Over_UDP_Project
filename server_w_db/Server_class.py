@@ -158,18 +158,27 @@ class Server:
             if clientMessage.subjects[0] in self.subjectOfInterests: # assuming only 1 subject passed
 
                 # add news to database SOI
-                self.dbControl.addMessage(clientMessage.subjects[0], clientMessage.text)
+                clientSOIs = self.dbControl.readOneData(clientMessage.name, DatabaseController.User.UserDataType.SUBJECT_INTEREST)
 
-                # send messages to users
-                usersNames = self.dbControl.get_existing_users()
-                for userName in usersNames:
-                    userSOIs = self.dbControl.readOneData(userName, DatabaseController.User.UserDataType.SUBJECT_INTEREST)
-                    userHost = self.dbControl.readOneData(userName, DatabaseController.User.UserDataType.IP_ADDRESS)
-                    userPort = self.dbControl.readOneData(userName, DatabaseController.User.UserDataType.SOCKET_NUMBER) # FIXME -> not sure if it returns an int
-                    if clientMessage.subjects[0] in userSOIs:
-                        print("server " + self.name + " message news " + userName)
-                        msg = Message(type_ = MessageTypes.MESSAGE, name = userName, subjects =  clientMessage.subjects[0], text = clientMessage.text)
-                        self.sendMsg(self.msgControl.serialize(msg), userHost, userPort)
+                if clientMessage.subjects[0] in clientSOIs:
+                    self.dbControl.addMessage(clientMessage.subjects[0], clientMessage.text)
+
+                    # send messages to users
+                    usersNames = self.dbControl.get_existing_users()
+                    for userName in usersNames:
+                        userSOIs = self.dbControl.readOneData(userName, DatabaseController.User.UserDataType.SUBJECT_INTEREST)
+                        userHost = self.dbControl.readOneData(userName, DatabaseController.User.UserDataType.IP_ADDRESS)
+                        userPort = self.dbControl.readOneData(userName, DatabaseController.User.UserDataType.SOCKET_NUMBER) # FIXME -> not sure if it returns an int
+                        if clientMessage.subjects[0] in userSOIs:
+                            print("server " + self.name + " message news " + userName)
+                            msg = Message(type_ = MessageTypes.MESSAGE, name = userName, subjects =  clientMessage.subjects[0], text = clientMessage.text)
+                            self.sendMsg(self.msgControl.serialize(msg), userHost, userPort)
+
+                else:
+                    # send to message user that it was denied
+                    print("server " + self.name + " reject publish news " + clientMessage.name)
+                    msg = Message(type_ = MessageTypes.PUBLISH_DENIED, rqNum = clientMessage.rqNum, reason = "user not subscribded to this subject")
+                    self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
 
             else:
                 # send to message user that it was denied

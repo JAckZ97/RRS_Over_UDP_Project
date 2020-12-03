@@ -3,6 +3,7 @@ SOI:
   - default
   pc:
   - default
+  - wat
   ps:
   - default
   vr:
@@ -29,4 +30,4 @@ User:
     register_status: false
     socket_number: 8888
     subject_interest:
-    - xbox
+    - pc
