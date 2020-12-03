@@ -39,6 +39,7 @@ class Client:
         print("PING test succeed with server " + message.text)
 
     def switch_server(self, message):
+
         # stop listening
         self.stopListenFlag = True
 

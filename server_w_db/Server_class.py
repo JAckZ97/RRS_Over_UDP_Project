@@ -234,6 +234,9 @@ class Server:
                 # print("server time out")
                 pass
 
+            except:
+                print("mystery")
+
             # FIXME : problem is that we cannot close the server, when it is waiting in the listenMsg() function (its blocking)
 
     def start(self):

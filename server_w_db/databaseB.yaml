@@ -10,12 +10,6 @@ SOI:
   xbox:
   - default
 User:
-  -3291887685604230596:
-    client_name: HAOCHENG
-    ip_address: 127.0.0.10
-    register_status: false
-    socket_number: 8888
-    subject_interest: ''
   -2812278327265638137:
     client_name: PHIL
     ip_address: 127.0.0.12
@@ -29,3 +23,10 @@ User:
     socket_number: 8888
     subject_interest:
     - pc
+  -1023760785748902848:
+    client_name: HAOCHENG
+    ip_address: 127.0.0.2
+    register_status: false
+    socket_number: 8888
+    subject_interest:
+    - xbox
