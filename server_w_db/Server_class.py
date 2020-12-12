@@ -211,7 +211,7 @@ class Server:
 
     def update_other_server_ack(self, message):
         # ack running server that paused server is changing ip/port
-        print(" server " + self.name + " ack. server " + message.name + " changed ip/port to " + message.ipAddress + "/" + message.socketNum)
+        print(" server " + self.name + " ack. server " + message.name + " changed ip/port to " + message.ipAddress + "/" + str(message.socketNum))
 
     # Class functions
     def server_switch_msg(self, newServer):
@@ -237,12 +237,12 @@ class Server:
             self.stopFlag = True
 
             self.HOST = input("ipAddress : ")
-            self.PORT = input("port : ")
+            self.PORT = int(input("port : "))
 
             # NOTE : Need to close and make a new socket before updating new ip address and port
             # close socket
-            # self.serverSocket.shutdown(socket.SHUT_RD)
-            # self.serverSocket.close()
+            self.serverSocket.shutdown(socket.SHUT_RD)
+            self.serverSocket.close()
 
             # create new socket
             self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

@@ -30,7 +30,7 @@ User:
   3780920084299864005:
     client_name: HAOCHENG
     ip_address: 127.0.0.10
-    is_connected: false
+    is_connected: true
     register_status: false
     socket_number: 8888
     subject_interest: ''
