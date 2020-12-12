@@ -83,7 +83,7 @@ class Client:
     def sendMsg(self, msg):
         self.clientSocket.sendto(msg, (self.serverHost, self.serverPort)) # FIXME : needs to be server host, port no ?
     
-    def sendRegisterMsg(self, msg):
+    def sendBothServer(self, msg):
         # send to both servers
         self.clientSocket.sendto(msg, (serverAHost, serverAPort)) # FIXME : needs to be server host, port no ?
         self.clientSocket.sendto(msg, (serverBHost, serverBPort)) # FIXME : needs to be server host, port no ?
@@ -151,7 +151,7 @@ class Client:
         # # tell the server client is connected
         self.connect()
 
-        options = ["register", "update", "deregister", "subject", "publish", "ping"]
+        options = ["register", "update", "deregister", "subject", "publish", "ping", "update-server-rq"]
         print("here are the options : ", options)
 
         while True:
@@ -167,7 +167,7 @@ class Client:
                 msg = Message(type_ = MessageTypes.REGISTER, rqNum = 1, name = self.name, 
                     ipAddress = self.HOST, socketNum = self.PORT, host = self.HOST, port = self.PORT)
 
-                self.sendRegisterMsg(self.msgControl.serialize(msg))
+                self.sendBothServer(self.msgControl.serialize(msg))
                 
             elif message == MessageTypes.UPDATE.value:
 
@@ -220,7 +220,12 @@ class Client:
                 print("PING sent")
                 msg = Message(type_ = MessageTypes.PING, rqNum = 1, name = self.name, host = self.HOST, port = self.PORT)
                 self.sendMsg(self.msgControl.serialize(msg))
-                
+
+            elif message == MessageTypes.UPDATE_SERVER_REQ.value:
+                print("admin -> update server sent")
+                msg = Message(type_ = MessageTypes.UPDATE_SERVER_REQ, rqNum = 1, name = self.name, host = self.HOST, port = self.PORT, isServer=True)
+                self.sendBothServer(self.msgControl.serialize(msg))
+
             else:
                 print("invalid choice")
                 

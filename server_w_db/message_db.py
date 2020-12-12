@@ -39,6 +39,10 @@ class MessageTypes(enum.Enum):
     DISCONNECT = "disconnect"
     DISCONNECT_FORWARD = "disconnect-forward"
 
+    # Update Server info
+    UPDATE_SERVER = "update-server"
+    UPDATE_SERVER_REQ = "update-server-rq"
+
 class Message:
     def __init__(self, type_, rqNum = 0, name = "", ipAddress = "", socketNum = 0, reason = "", subjects = None, text = "", host = "", port = 0, isServer = False):
 

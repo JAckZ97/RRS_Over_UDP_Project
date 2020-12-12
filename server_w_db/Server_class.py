@@ -36,7 +36,10 @@ class Server:
             MessageTypes.CONNECT: self.connect_client,
             MessageTypes.CONNECT_FORWARD: self.connect_client_paused,
             MessageTypes.DISCONNECT: self.disconnect_client,
-            MessageTypes.DISCONNECT_FORWARD: self.disconnect_client_paused
+            MessageTypes.DISCONNECT_FORWARD: self.disconnect_client_paused,
+
+            MessageTypes.UPDATE_SERVER: self.update_other_server_ack,
+            MessageTypes.UPDATE_SERVER_REQ: self.update_server_info
         }
 
         self.listenClient = True
@@ -206,11 +209,15 @@ class Server:
             msg = Message(type_ = MessageTypes.PUBLISH_DENIED, rqNum = clientMessage.rqNum, reason = "user is not registered in the database")
             self.sendMsg(self.msgControl.serialize(msg), clientMessage.host, clientMessage.port)
 
+    def update_other_server_ack(self, message):
+        # ack running server that paused server is changing ip/port
+        print(" server " + self.name + " ack. server " + message.name + " changed ip/port to " + message.ipAddress + "/" + message.socketNum)
+
     # Class functions
     def server_switch_msg(self, newServer):
         # send to message user that it was denied
-        print("server " + self.name + " switch to " + newServer.name)
-        
+        # print("server " + self.name + " switch to " + newServer.name)
+
         # FIXME : here we need to check if the users are connected before we send a message to them !!! or else will have error
         # however, the error is only seen on WINDOWS
         # send messages to users
@@ -222,6 +229,30 @@ class Server:
             if self.check_connection(userName):
                 msg = Message(type_ = MessageTypes.CHANGE_SERVER, ipAddress = newServer.HOST, socketNum = newServer.PORT)
                 self.sendMsg(self.msgControl.serialize(msg), userHost, userPort)
+
+    def update_server_info(self, message):
+        if self.listenClient == False: # only paused server can update info
+            # inform running server that paused server is changing ip/port
+
+            self.stopFlag = True
+
+            self.HOST = input("ipAddress : ")
+            self.PORT = input("port : ")
+
+            # NOTE : Need to close and make a new socket before updating new ip address and port
+            # close socket
+            # self.serverSocket.shutdown(socket.SHUT_RD)
+            # self.serverSocket.close()
+
+            # create new socket
+            self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self.serverSocket.bind((self.HOST, self.PORT))
+
+            # send to other server
+            msg = Message(type_ = MessageTypes.UPDATE_SERVER, name = self.name, ipAddress=self.HOST, socketNum=self.PORT, isServer=True)
+            self.sendMsg(self.msgControl.serialize(msg), self.otherServer.HOST, self.otherServer.PORT)
+
+            self.stopFlag = False
 
     def clients_online(self):
         return self.dbControl.get_online_size()
@@ -281,22 +312,23 @@ class Server:
         self.stopFlag = False
         self.listenClient = True
         print("running server -> ", self.name)
-        while not self.stopFlag:
-            try:
-                data, addr = self.listenMsg()
-                message = self.msgControl.deserialize(data)
-                
-                # check if message is from client or server
-                if (message.isServer == False) and self.listenClient == False:
+        while True:
+            if not self.stopFlag:
+                try:
+                    data, addr = self.listenMsg()
+                    message = self.msgControl.deserialize(data)
+
+                    # check if message is from client or server
+                    if (message.isServer == False) and self.listenClient == False:
+                        pass
+                    else:
+                        self.messageFunctions[message.type_](message)
+
+                except socket.timeout:
+                    # print("server time out")
                     pass
-                else:
-                    self.messageFunctions[message.type_](message)
 
-            except socket.timeout:
-                # print("server time out")
-                pass
-
-            # FIXME : problem is that we cannot close the server, when it is waiting in the listenMsg() function (its blocking)
+                # FIXME : problem is that we cannot close the server, when it is waiting in the listenMsg() function (its blocking)
 
     def start(self):
         # FIXME : the problem is that when a server gets reconnected, it will listenMsg to any msg in the input buffer

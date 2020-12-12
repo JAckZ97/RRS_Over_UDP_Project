@@ -13,7 +13,7 @@ def switch_server(closeServer, runServer):
 
     # run new server
     runServer.resume()
-    
+
     # message clients that server will close and they need to switch
     # FIXME : Needs further testing ...
     closeServer.server_switch_msg(runServer)
