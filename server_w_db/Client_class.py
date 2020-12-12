@@ -34,6 +34,8 @@ class Client:
 
         self.clientSocket.settimeout(1) # un-block after 1s
 
+        self.options = ["register", "update", "deregister", "subject", "publish", "ping", "update-server-rq"]
+
     # Message Functions
     def ping_test(self, message):
         print("PING test succeed with server " + message.text)
@@ -50,13 +52,13 @@ class Client:
         self.stopListenFlag = False
 
     def print_registered(self, message):
-        print("I " + self.name + " is registered !")
+        self.print_output("I " + self.name + " is registered !")
 
     def print_updated_socket_info(self, message):
         print("I " + self.name + " is updated !")
 
     def print_registered_denied(self, message):
-        print("I " + self.name + " is registered denied !")
+        self.print_output("I " + self.name + " is registered denied !")
 
     def print_updated_socket_info_denied(self, message):
         print("I " + self.name + " is updated denied !")
@@ -151,8 +153,7 @@ class Client:
         # # tell the server client is connected
         self.connect()
 
-        options = ["register", "update", "deregister", "subject", "publish", "ping", "update-server-rq"]
-        print("here are the options : ", options)
+        print("here are the options : ", self.options)
 
         while True:
             # data, addr = listenMsg()
@@ -246,7 +247,71 @@ class Client:
             
             else:
                 time.sleep(0.001)
-            
-# FIXME : Client need to connect to the appropriate server
 
-    
+# GUI related functions
+
+    def init(self):
+        # tell the server client is connected
+        self.connect()
+
+    def set_output_box(self, outputBox):
+        self.outputBox = outputBox
+
+    def print_output(self, text):
+        print(text)
+        self.outputBox.print_2_window(text)
+
+    def update_host_port_ui(self, newIpAddress, newPort):
+        # FIXME : since timeout 1s, there is a possbility that we are listenMsg + bind at the same time == ERROR
+
+        # stop listening
+        self.stopListenFlag = True
+
+        self.HOST = newIpAddress
+        self.PORT = int(newPort)
+
+        # NOTE : Need to close and make a new socket before updating new ip address and port
+        # close socket
+        self.clientSocket.shutdown(socket.SHUT_RD)
+        self.clientSocket.close()
+
+        # create new socket
+        self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.clientSocket.bind((self.HOST, self.PORT))
+
+        # resume listening
+        self.stopListenFlag = False
+
+    def send_message(self, messageType, messageData):
+        print(messageData)
+        if messageType == MessageTypes.REGISTER.value:
+            
+            msg = Message(type_ = MessageTypes.REGISTER, rqNum = 1, name = self.name, 
+                ipAddress = self.HOST, socketNum = self.PORT, host = self.HOST, port = self.PORT)
+
+            self.sendBothServer(self.msgControl.serialize(msg))
+
+        elif messageType == MessageTypes.UPDATE.value:
+
+            # tell the server to disconnect the client
+            self.disconnect()
+            
+            # update host and port
+            self.update_host_port_ui(messageData["ipAddress"], messageData["socketNum"])
+            
+            msg = Message(type_ = MessageTypes.UPDATE, rqNum = 1, name = self.name, 
+                ipAddress = self.HOST, socketNum = self.PORT, host = self.HOST, port = self.PORT)
+
+            self.sendMsg(self.msgControl.serialize(msg))
+
+            # tell the server to connect the client
+            self.connect()
+            
+        elif messageType == MessageTypes.DEREGISTER.value:
+            
+            msg = Message(type_ = MessageTypes.DEREGISTER, rqNum = 1, name = self.name, host = self.HOST, port = self.PORT)
+
+            self.sendMsg(self.msgControl.serialize(msg))
+
+        else:
+            print("invalid choice")
