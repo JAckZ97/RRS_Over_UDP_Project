@@ -11,6 +11,7 @@ from globals_ import serverAHost, serverAPort, serverBHost, serverBPort
 from tools.socket_tools import check_ip_port
 
 """
+TODO - change run_msg_queue -> process_thread (naming)
 TODO - server update ip/port
 TODO - have a list of ip/port being used
 TODO - show client ip/port on GUI
