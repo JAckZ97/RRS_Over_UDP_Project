@@ -38,7 +38,7 @@ class Client:
 
     # Message Functions
     def ping_test(self, message):
-        print("PING test succeed with server " + message.text)
+        self.print_output("PING test succeed with server " + message.text)
 
     def switch_server(self, message):
 
@@ -285,11 +285,14 @@ class Client:
     def send_message(self, messageType, messageData):
         print(messageData)
         if messageType == MessageTypes.REGISTER.value:
-            
+              
             msg = Message(type_ = MessageTypes.REGISTER, rqNum = 1, name = self.name, 
                 ipAddress = self.HOST, socketNum = self.PORT, host = self.HOST, port = self.PORT)
 
             self.sendBothServer(self.msgControl.serialize(msg))
+
+            # connect the client
+            self.connect()
 
         elif messageType == MessageTypes.UPDATE.value:
 
@@ -311,6 +314,10 @@ class Client:
             
             msg = Message(type_ = MessageTypes.DEREGISTER, rqNum = 1, name = self.name, host = self.HOST, port = self.PORT)
 
+            self.sendMsg(self.msgControl.serialize(msg))
+
+        elif messageType == MessageTypes.PING.value:
+            msg = Message(type_ = MessageTypes.PING, rqNum = 1, name = self.name, host = self.HOST, port = self.PORT)
             self.sendMsg(self.msgControl.serialize(msg))
 
         else:

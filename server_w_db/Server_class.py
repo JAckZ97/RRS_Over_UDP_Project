@@ -216,7 +216,7 @@ class Server:
     # Class functions
     def server_switch_msg(self, newServer):
         # send to message user that it was denied
-        # print("server " + self.name + " switch to " + newServer.name)
+        print("server " + self.name + " switch to " + newServer.name)
 
         # FIXME : here we need to check if the users are connected before we send a message to them !!! or else will have error
         # however, the error is only seen on WINDOWS
