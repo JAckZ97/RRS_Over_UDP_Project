@@ -56,6 +56,8 @@ class Server:
 
         self.runServerFlag = True
 
+        self.isListening = False
+
     def set_otherServer(self, otherServer):
         self.otherServer = otherServer
 
@@ -241,6 +243,10 @@ class Server:
         if self.listenClient == False: # only paused server can update info
             # inform running server that paused server is changing ip/port
 
+            while self.isListening: # wait for socket to stop listening before doing anything else
+                time.sleep(TIMEOUT)
+                print("socket still listening ...")
+
             self.stopFlag = True
 
             self.HOST = input("ipAddress : ")
@@ -254,6 +260,7 @@ class Server:
             # create new socket
             self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.serverSocket.bind((self.HOST, self.PORT))
+            self.serverSocket.settimeout(TIMEOUT) # un-block after TIMEOUT s
 
             # send to other server
             msg = Message(type_ = MessageTypes.UPDATE_SERVER, name = self.name, ipAddress=self.HOST, socketNum=self.PORT, isServer=True)
@@ -320,6 +327,7 @@ class Server:
         self.stopFlag = False
         self.listenClient = True
         self.runServerFlag = True
+        self.isListening = False
 
         print("running server -> ", self.name)
 
@@ -327,6 +335,8 @@ class Server:
             time.sleep(0.001)
             if not self.stopFlag:
                 try:
+                    self.isListening = True
+
                     data, addr = self.listenMsg()
                     message = self.msgControl.deserialize(data)
 
@@ -336,6 +346,9 @@ class Server:
                 except socket.timeout:
                     # print("server time out")
                     pass
+
+                finally:
+                    self.isListening = False
 
                 # FIXME : problem is that we cannot close the server, when it is waiting in the listenMsg() function (its blocking)
 

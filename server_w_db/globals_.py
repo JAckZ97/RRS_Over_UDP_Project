@@ -7,4 +7,4 @@ serverBPort = 3000
 databaseAFilePath = "databaseA.yaml"
 databaseBFilePath = "databaseB.yaml"
 
-TIMEOUT = 0.1
+TIMEOUT = 0.01

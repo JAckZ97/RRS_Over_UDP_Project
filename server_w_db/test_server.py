@@ -36,7 +36,7 @@ serverB.set_otherServer(serverA)
 
 serverA.start()
 serverB.start()
-serverB.pause()
+# serverB.pause()
 
 try:
     # # run system
@@ -47,11 +47,11 @@ try:
 
         # if serverA.clients_online() >= 1: # only switch if there is at leats one client online
 
-        # switch_server(serverA,serverB)
+        switch_server(serverA,serverB)
 
         time.sleep(random.randint(1,3))
 
-        # switch_server(serverB,serverA)
+        switch_server(serverB,serverA)
 
         time.sleep(random.randint(1,3))
 

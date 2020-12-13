@@ -10,6 +10,8 @@ from Client_class import Client
 from globals_ import serverAHost, serverAPort, serverBHost, serverBPort
 
 """
+TODO - have a list of ip/port being used
+TODO - show client ip/port on GUI
 TODO - for some reason, tryin to register 4th is not working
 TODO - register as deafult message command
 TODO - updating ipadress of client -> and then restart the system (get error since ipaddress in test_client is not the same)
@@ -111,7 +113,8 @@ if __name__ == '__main__':
         window = setup_window(client)
 
         # set signal
-        client.set_print_signal(window.printSignal.PRINT)
+        client.set_print_signal(window.printSignal.PRINT) 
+        # NOTE : if we dont add this, it causes random crashes since we trying to update the GUI from another thread ... 
 
         # Show Window
         windows.append(window)

@@ -45,6 +45,8 @@ class Client:
 
         self.runClientFlag = True
 
+        self.isListening = False
+
     # Message Functions
     def ping_test(self, message):
         self.print_output("PING test succeed with server " + message.text)
@@ -102,6 +104,10 @@ class Client:
     def update_host_port(self):
         # FIXME : since timeout 1s, there is a possbility that we are listenMsg + bind at the same time == ERROR
 
+        while self.isListening: # wait for socket to stop listening before doing anything else
+            time.sleep(0.1)
+            print("socket still listening ...")
+
         # stop listening
         self.stopListenFlag = True
 
@@ -116,6 +122,7 @@ class Client:
         # create new socket
         self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.clientSocket.bind((self.HOST, self.PORT))
+        self.clientSocket.settimeout(TIMEOUT) # un-block after 1s
 
         # resume listening
         self.stopListenFlag = False
@@ -254,11 +261,14 @@ class Client:
                 
     def listen_thread(self):
         self.runClientFlag = True
+        self.isListening = False
 
         while self.runClientFlag:
             time.sleep(0.001)
             if not self.stopListenFlag:
                 try:
+                    self.isListening = True
+                    
                     data, addr = self.listenMsg()
                     message = self.msgControl.deserialize(data)
                     
@@ -268,6 +278,9 @@ class Client:
                 except socket.timeout:
                     # print("server time out")
                     pass
+
+                finally:
+                    self.isListening = False
 
     def run_msg_queue(self):
         while self.runClientFlag:
@@ -295,6 +308,10 @@ class Client:
     def update_host_port_ui(self, newIpAddress, newPort):
         # FIXME : since timeout 1s, there is a possbility that we are listenMsg + bind at the same time == ERROR
 
+        while self.isListening: # wait for socket to stop listening before doing anything else
+            time.sleep(TIMEOUT)
+            print("socket still listening ...")
+
         # stop listening
         self.stopListenFlag = True
 
@@ -309,6 +326,7 @@ class Client:
         # create new socket
         self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.clientSocket.bind((self.HOST, self.PORT))
+        self.clientSocket.settimeout(TIMEOUT) # un-block after TIMEOUT s
 
         # resume listening
         self.stopListenFlag = False
@@ -372,3 +390,7 @@ class Client:
 
         else:
             print("invalid choice")
+
+# NOTE : the reason why the update message (updating the client ip/port) didnt work before was because the socket
+# was listening when we close the connection. Therefore, we need to wait for the listening to be over before closing.
+# also have to set the timeout again as well
