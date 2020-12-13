@@ -4,6 +4,7 @@ SOI:
   pc:
   - default
   - wat
+  - app
   ps:
   - default
   vr:
@@ -19,19 +20,26 @@ User:
     register_status: false
     socket_number: 8888
     subject_interest: ''
-  -1087307508706077920:
-    client_name: JACK
-    ip_address: 127.0.0.11
-    is_connected: true
-    register_status: false
-    socket_number: 8888
-    subject_interest:
-    - pc
   -1023760785748902848:
     client_name: HAOCHENG
     ip_address: 127.0.0.10
     is_connected: false
     register_status: false
     socket_number: 8888
+    subject_interest:
+    - pc
+  -1130866518:
+    client_name: Usera
+    ip_address: 127.0.0.12
+    is_connected: true
+    register_status: false
+    socket_number: 8888
+    subject_interest: ''
+  618193308:
+    client_name: Jack
+    ip_address: 127.0.0.15
+    is_connected: false
+    register_status: false
+    socket_number: 1111
     subject_interest:
     - pc

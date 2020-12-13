@@ -7,6 +7,7 @@ serverA = Server("A", "127.0.0.1", 8888)
 serverB = Server("B", "127.0.0.2", 8887)
 """
 
+'''
 data = int(input("client (0,1,2) : "))
 
 if data == 0:
@@ -23,3 +24,12 @@ elif data == 2:
     client.run()
 else:
     print("invalid choice")
+'''
+
+print("Information format:Name IP Port")
+data = input("Enter client information: ")
+messageList = data.split()
+
+client = Client(messageList[0], messageList[1], int(messageList[2]))
+client.set_server(serverAHost, serverAPort)
+client.run()
