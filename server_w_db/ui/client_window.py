@@ -15,12 +15,14 @@ class ClientWindow(QtWidgets.QMainWindow):
     """
     client window
     """
-    def __init__(self, messageTypes):
+    def __init__(self, messageTypes, clientName):
         super(ClientWindow, self).__init__()
 
         # setup ui
         self.setup_ui(messageTypes)
         # self.setMinimumSize(700, 500)
+
+        self.setWindowTitle(clientName) 
 
     def setup_ui(self, messageTypes):
         """
