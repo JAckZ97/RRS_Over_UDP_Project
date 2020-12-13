@@ -5,6 +5,8 @@ from PySide2 import QtWidgets
 from PySide2 import QtGui
 # User Imports
 from ui.client_window import ClientWindow
+from Client_class import Client
+from globals_ import serverAHost, serverAPort, serverBHost, serverBPort
 
 """
 TODO - updating ipadress of client -> and then restart the system (get error since ipaddress in test_client is not the same)
@@ -17,15 +19,7 @@ TODO - connect client at the beggining if we remove the client.run()
 TODO - make window nicer (send msg icon, color scheme, font)
 """
 
-def thread_function(name):
-    import time
-    for i in range(10):
-        print(i)
-        time.sleep(2)
-
 def setup_client():
-    from Client_class import Client
-    from globals_ import serverAHost, serverAPort, serverBHost, serverBPort
     client = Client("HAOCHENG", "127.0.0.10", 8888)
     client.set_server(serverAHost, serverAPort)
 
@@ -57,17 +51,24 @@ if __name__ == '__main__':
     # with open("resources/style.qss", "r") as f:
     #     app.setStyleSheet(f.read())
 
-    # Setup CLient
-    client = setup_client()
+    # Setup Client
+    clientA = Client("HAOCHENG", "127.0.0.10", 8888)
+    clientA.set_server(serverAHost, serverAPort)
+
+    clientB = Client("JACK", "127.0.0.11", 8888)
+    clientB.set_server(serverAHost, serverAPort)
 
     # Open Window
-    window = setup_window(client)
+    windowA = setup_window(clientA)
+    windowB = setup_window(clientB)
 
     # Start Client Thread
-    client.run()
+    clientA.run()
+    clientB.run()
 
     # Show Window
-    window.show()
+    windowA.show()
+    windowB.show()
 
     try:
         # Exit

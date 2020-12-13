@@ -23,11 +23,11 @@ User:
   -1087307508706077920:
     client_name: JACK
     ip_address: 127.0.0.11
-    is_connected: false
+    is_connected: true
     register_status: false
     socket_number: 8888
     subject_interest:
-    - pc
+    - ps
   -99949991:
     client_name: HAOCHENG
     ip_address: 127.0.0.10
@@ -36,4 +36,3 @@ User:
     socket_number: 8888
     subject_interest:
     - ps
-    - nintendo
