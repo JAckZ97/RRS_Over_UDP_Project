@@ -122,6 +122,10 @@ class Client:
         listenThread = threading.Thread(target=self.listen_thread)
         listenThread.start()
 
+    def start(self):
+        listenThread = threading.Thread(target=self.listen_thread)
+        listenThread.start()
+
     def stop(self):
         self.runServerFlag = False
 

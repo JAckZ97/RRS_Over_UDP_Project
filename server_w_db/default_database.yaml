@@ -1,0 +1,19 @@
+SOI:
+  nintendo:
+  - default
+  pc:
+  - default
+  ps:
+  - default
+  vr:
+  - default
+  xbox:
+  - default
+User:
+  -2812278327265638137:
+    client_name: default
+    ip_address: 127.0.0.0
+    is_connected: false
+    register_status: false
+    socket_number: 0000
+    subject_interest: ''

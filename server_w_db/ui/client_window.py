@@ -39,6 +39,7 @@ class ClientWindow(QtWidgets.QMainWindow):
 
         # Add Widgets Functionality
         self.messageCb.currentIndexChanged.connect(self.choose_message_type)
+        self.messageCb.setCurrentIndex(0)
 
         # Add layouts
         self.layout.addWidget(self.messageCb, 0, 0)

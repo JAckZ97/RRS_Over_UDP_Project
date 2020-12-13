@@ -3,37 +3,31 @@ SOI:
   - default
   pc:
   - default
-  - wat
   ps:
   - default
-  - asd
-  - wow
   vr:
   - default
   xbox:
   - default
-  - asd
 User:
   -2812278327265638137:
-    client_name: PHIL
-    ip_address: 127.0.0.12
+    client_name: default
+    ip_address: 127.0.0.0
+    is_connected: false
+    register_status: false
+    socket_number: 0
+    subject_interest: ''
+  -881090280:
+    client_name: JACK
+    ip_address: 127.0.0.11
     is_connected: false
     register_status: false
     socket_number: 8888
     subject_interest: ''
-  -1087307508706077920:
-    client_name: JACK
-    ip_address: 127.0.0.11
-    is_connected: true
-    register_status: false
-    socket_number: 8888
-    subject_interest:
-    - ps
-  -99949991:
+  -729602680:
     client_name: HAOCHENG
     ip_address: 127.0.0.10
-    is_connected: true
+    is_connected: false
     register_status: false
     socket_number: 8888
-    subject_interest:
-    - ps
+    subject_interest: ''

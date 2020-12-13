@@ -60,12 +60,21 @@ class DatabaseController:
             self.User.UserDataType.IS_CONNECTED
         ]
 
+        # reset the database
+        self.reset_database()
+        
         # get data from database
         self.userNameList = self.get_existing_users()
 
         # set all user to not connected on startup
         for userName in self.userNameList:
             self.setConnected(userName, False)
+
+    def reset_database(self):
+        with open("default_database.yaml") as f:
+            lines = f.readlines()
+            with open(self.dbFile, "w") as f1:
+                f1.writelines(lines)
 
     def setup(self):
         # write a default user to the database to setup the structure
@@ -84,10 +93,15 @@ class DatabaseController:
         nameList = []
         with open(self.dbFile,'r') as yamlfile:
             database = yaml.safe_load(yamlfile)
-            for k, v in database[self.dbName].items():
-                nameList.append(database[self.dbName][k][self.User.UserDataType.CLIENT_NAME.value])
+            
+            if database[self.dbName] != None:
+                for k, v in database[self.dbName].items():
+                    nameList.append(database[self.dbName][k][self.User.UserDataType.CLIENT_NAME.value])
 
-        return nameList
+                return nameList
+            
+            else:
+                return []
     
     # is connected
     def userIsConnected(self, userName):

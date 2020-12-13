@@ -262,13 +262,14 @@ class Server:
         return result
 
     def connect_client(self, clientMessage):
-        self.dbControl.setConnected(clientMessage.name, True)
+        if self.dbControl.checkExistUser(clientMessage.name):
+            self.dbControl.setConnected(clientMessage.name, True)
 
-        print("connecting client")
+            print("connecting client")
 
-        # send to other server
-        msg = Message(type_ = MessageTypes.CONNECT_FORWARD, name = clientMessage.name, isServer=True)
-        self.sendMsg(self.msgControl.serialize(msg), self.otherServer.HOST, self.otherServer.PORT)
+            # send to other server
+            msg = Message(type_ = MessageTypes.CONNECT_FORWARD, name = clientMessage.name, isServer=True)
+            self.sendMsg(self.msgControl.serialize(msg), self.otherServer.HOST, self.otherServer.PORT)
 
     def connect_client_paused(self, message):
         self.dbControl.setConnected(message.name, True)

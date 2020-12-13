@@ -9,6 +9,7 @@ from Client_class import Client
 from globals_ import serverAHost, serverAPort, serverBHost, serverBPort
 
 """
+TODO - register as deafult message command
 TODO - updating ipadress of client -> and then restart the system (get error since ipaddress in test_client is not the same)
 TODO - show the available subjects
 TODO - random crashes (when you spam message commands) -> maybe because of the timeout
@@ -37,6 +38,16 @@ def setup_window(client):
 
     return clientWindow
 
+def close(app, clients):
+    app.exec_()
+    
+    # close and disconnect clients 
+    for client in clients:
+        client.disconnect()
+        client.stop()
+
+    print("done")
+
 # * Code
 if __name__ == '__main__':
 
@@ -58,22 +69,20 @@ if __name__ == '__main__':
     clientB = Client("JACK", "127.0.0.11", 8888)
     clientB.set_server(serverAHost, serverAPort)
 
+    # Clients
+    clients = [clientA, clientB]
+
     # Open Window
     windowA = setup_window(clientA)
     windowB = setup_window(clientB)
 
     # Start Client Thread
-    clientA.run()
-    clientB.run()
+    clientA.start()
+    clientB.start()
 
     # Show Window
     windowA.show()
     windowB.show()
 
-    try:
-        # Exit
-        sys.exit(app.exec_())
-
-    except KeyboardInterrupt:
-        client.stop()
-        print("done.")
+    # Exit
+    sys.exit(close(app, clients))
