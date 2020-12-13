@@ -4,6 +4,10 @@ import time
 from message_db import Message, MessageController, MessageTypes
 from globals_ import serverAHost, serverAPort, serverBHost, serverBPort, TIMEOUT
 
+#import threading
+import cgitb 
+cgitb.enable(format = 'text')
+
 class Client:
     
     def __init__(self, name, host = 'localhost', port = 8888):
@@ -38,6 +42,8 @@ class Client:
 
         # message queue
         self.msgQueue = []
+
+        self.runClientFlag = True
 
     # Message Functions
     def ping_test(self, message):
@@ -124,6 +130,9 @@ class Client:
 
         listenThread = threading.Thread(target=self.listen_thread)
         listenThread.start()
+
+        queueThread = threading.Thread(target=self.run_msg_queue)
+        queueThread.start()
 
     def start(self):
         listenThread = threading.Thread(target=self.listen_thread)
@@ -273,12 +282,15 @@ class Client:
         # tell the server client is connected
         self.connect()
 
+    def set_print_signal(self, printSignal):
+        self.printSignal = printSignal
+
     def set_output_box(self, outputBox):
         self.outputBox = outputBox
 
-    def print_output(self, text):
+    def print_output(self, text = "default"):
         print(text)
-        self.outputBox.print_2_window(text)
+        self.printSignal.emit(text) # signal emitted to print out in GUI
 
     def update_host_port_ui(self, newIpAddress, newPort):
         # FIXME : since timeout 1s, there is a possbility that we are listenMsg + bind at the same time == ERROR
@@ -302,7 +314,6 @@ class Client:
         self.stopListenFlag = False
 
     def send_message(self, messageType, messageData):
-        print(messageData)
         if messageType == MessageTypes.REGISTER.value:
               
             msg = Message(type_ = MessageTypes.REGISTER, rqNum = 1, name = self.name, 

@@ -46,13 +46,15 @@ class Server:
 
         self.listenClient = True
         self.stopFlag = False
-        self.serverSocket.settimeout(TIMEOUT) # un-block after 2s
+        self.serverSocket.settimeout(TIMEOUT) # un-block after TIMEOUT
 
         # List of Possible Subjects
         self.subjectOfInterests = ["ps", "xbox", "pc", "nintendo", "vr"]
 
         # message queue
         self.msgQueue = []
+
+        self.runServerFlag = True
 
     def set_otherServer(self, otherServer):
         self.otherServer = otherServer

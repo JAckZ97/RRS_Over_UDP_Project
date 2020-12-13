@@ -5,6 +5,7 @@ from PySide2 import QtWidgets
 from PySide2 import QtGui
 # User Imports
 from ui.client_window import ClientWindow
+from ui.client_widgets import PrintSignal
 from Client_class import Client
 from globals_ import serverAHost, serverAPort, serverBHost, serverBPort
 
@@ -80,7 +81,6 @@ if __name__ == '__main__':
 
     #     client = Client(messageList[0], messageList[1], int(messageList[2]))
     #     clients.append(client)
-
     
     clientA = Client("HAOCHENG", "127.0.0.10", 8888)
     clientA.set_server(serverAHost, serverAPort)
@@ -104,24 +104,25 @@ if __name__ == '__main__':
     # clientB.start()
     # # Show Window
     # windowB.show()
-    try:
-        # Open Window
-        windows = []
-        for client in clients:
-            window = setup_window(client)
 
-            # Show Window
-            windows.append(window)
+    # Open Window
+    windows = []
+    for client in clients:
+        window = setup_window(client)
 
-        for client in clients:
-            # Start Client Thread
-            client.start()
+        # set signal
+        client.set_print_signal(window.printSignal.PRINT)
 
-        for window in windows:
-            window.show()
+        # Show Window
+        windows.append(window)
 
-        # Exit
-        sys.exit(close(app, clients))
+    for client in clients:
+        # Start Client Thread
+        client.start()
 
-    except Exception as e:
-        print(e)
+    for window in windows:
+        window.show()
+
+    # Exit
+    sys.exit(close(app, clients))
+

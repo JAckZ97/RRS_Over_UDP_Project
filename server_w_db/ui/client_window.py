@@ -8,7 +8,7 @@ from PySide2 import QtWidgets
 from PySide2 import QtGui
 from PySide2 import QtCore
 # User Imports
-from ui.client_widgets import MessageComboBox, InputBox, SendButton, SendStatus, OutputBox
+from ui.client_widgets import MessageComboBox, InputBox, SendButton, SendStatus, OutputBox, PrintSignal
 
 # * Code
 class ClientWindow(QtWidgets.QMainWindow):
@@ -39,6 +39,9 @@ class ClientWindow(QtWidgets.QMainWindow):
         self.sendStatus = SendStatus()
         self.msgWindow = OutputBox()
 
+        self.printSignal = PrintSignal()
+        self.printSignal.PRINT.connect(self.msgWindow.print_2_window)
+
         # Add Widgets Functionality
         self.messageCb.currentIndexChanged.connect(self.choose_message_type)
         self.messageCb.setCurrentIndex(0) # set to register
@@ -56,3 +59,6 @@ class ClientWindow(QtWidgets.QMainWindow):
 
     def choose_message_type(self):
         self.sendButton.set_msg_type(self.messageCb.currentText())
+
+    def bark(self):
+        pass

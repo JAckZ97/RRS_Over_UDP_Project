@@ -7,6 +7,7 @@
 from PySide2 import QtWidgets
 from PySide2 import QtGui
 from PySide2 import QtCore
+from PySide2.QtCore import QObject, Signal, Slot                            
 
 # SIZES
 INPUT_BOX_MIN_SIZE = [200,300]
@@ -125,7 +126,21 @@ class SendStatus(QtWidgets.QLabel):
     def rejected(self):
         self.setText("sent failed")
 
+class PrintSignal(QtCore.QObject):
+    PRINT = QtCore.Signal(str)
+
+    def __init__(self):
+        super(PrintSignal, self).__init__()
+
+    #     self.PRINT.connect(self.print_output)
+
+    #     self.outputBox = outputBox
+
+    # def print_output(self):
+    #     self.outputBox.print_2_window()
+
 class OutputBox(QtWidgets.QPlainTextEdit):
+    
     def __init__(self):
         super(OutputBox, self).__init__()
 
@@ -136,5 +151,6 @@ class OutputBox(QtWidgets.QPlainTextEdit):
         self.setPlaceholderText("msg output box")
         self.setReadOnly(True)
 
+    @Slot(str)
     def print_2_window(self, text):
         self.appendPlainText(text)
