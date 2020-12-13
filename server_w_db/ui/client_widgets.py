@@ -19,10 +19,7 @@ class MessageComboBox(QtWidgets.QComboBox):
         super(MessageComboBox, self).__init__()
 
         self.addItems(messageTypes)
-        self.currentIndexChanged.connect(self.select)
-
-    def select(self):
-        print(self.currentText())
+        self.setCurrentIndex(-1) # so that we can set the default message command to register
 
 class InputBox(QtWidgets.QGroupBox):
     def __init__(self, messageData):
