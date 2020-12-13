@@ -105,27 +105,47 @@ class Client:
         # FIXME : since timeout 1s, there is a possbility that we are listenMsg + bind at the same time == ERROR
 
         while self.isListening: # wait for socket to stop listening before doing anything else
-            time.sleep(0.1)
+            time.sleep(TIMEOUT)
             print("socket still listening ...")
 
         # stop listening
         self.stopListenFlag = True
 
-        self.HOST = input("host : ")
-        self.PORT = int(input("port : "))
+        newHost = input("host : ")
+        newPort = int(input("port : "))
 
-        # NOTE : Need to close and make a new socket before updating new ip address and port
-        # close socket
-        self.clientSocket.shutdown(socket.SHUT_RD)
-        self.clientSocket.close()
+        try:
+            # check if ip is legal
+            socket.inet_aton(newHost)
 
-        # create new socket
-        self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.clientSocket.bind((self.HOST, self.PORT))
-        self.clientSocket.settimeout(TIMEOUT) # un-block after 1s
+            # check if port is legal
+            # port should be an integer from 1-65535
+            if not(1 < newPort < 65535):
+                raise socket.error
 
-        # resume listening
-        self.stopListenFlag = False
+            # legal
+
+            # set ip/port
+            self.HOST = newHost
+            self.PORT = newPort
+
+            # NOTE : Need to close and make a new socket before updating new ip address and port
+            # close socket
+            self.clientSocket.shutdown(socket.SHUT_RD)
+            self.clientSocket.close()
+
+            # create new socket
+            self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self.clientSocket.bind((self.HOST, self.PORT))
+            self.clientSocket.settimeout(TIMEOUT) # un-block after 1s
+
+        except socket.error:
+            # Not legal
+            self.print_output("ip address/port invalid")
+
+        finally:
+            # resume listening
+            self.stopListenFlag = False
     
     def set_server(self, host, port):
         self.serverHost = host
@@ -303,33 +323,52 @@ class Client:
 
     def print_output(self, text = "default"):
         print(text)
-        self.printSignal.emit(text) # signal emitted to print out in GUI
+        # self.printSignal.emit(text) # signal emitted to print out in GUI
 
-    def update_host_port_ui(self, newIpAddress, newPort):
+    def update_host_port_ui(self, newHost, newPort):
         # FIXME : since timeout 1s, there is a possbility that we are listenMsg + bind at the same time == ERROR
 
+        newPort = int(newPort)
+
         while self.isListening: # wait for socket to stop listening before doing anything else
-            time.sleep(TIMEOUT)
+            time.sleep(0.1)
             print("socket still listening ...")
 
         # stop listening
         self.stopListenFlag = True
 
-        self.HOST = newIpAddress
-        self.PORT = int(newPort)
+        try:
+            # check if ip is legal
+            socket.inet_aton(newHost)
 
-        # NOTE : Need to close and make a new socket before updating new ip address and port
-        # close socket
-        self.clientSocket.shutdown(socket.SHUT_RD)
-        self.clientSocket.close()
+            # check if port is legal
+            # port should be an integer from 1-65535
+            if not(1 < newPort < 65535):
+                raise socket.error
 
-        # create new socket
-        self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.clientSocket.bind((self.HOST, self.PORT))
-        self.clientSocket.settimeout(TIMEOUT) # un-block after TIMEOUT s
+            # legal
 
-        # resume listening
-        self.stopListenFlag = False
+            # set ip/port
+            self.HOST = newHost
+            self.PORT = newPort
+
+            # NOTE : Need to close and make a new socket before updating new ip address and port
+            # close socket
+            self.clientSocket.shutdown(socket.SHUT_RD)
+            self.clientSocket.close()
+
+            # create new socket
+            self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self.clientSocket.bind((self.HOST, self.PORT))
+            self.clientSocket.settimeout(TIMEOUT) # un-block after 1s
+
+        except socket.error:
+            # Not legal
+            self.print_output("ip address/port invalid")
+
+        finally:
+            # resume listening
+            self.stopListenFlag = False
 
     def send_message(self, messageType, messageData):
         if messageType == MessageTypes.REGISTER.value:

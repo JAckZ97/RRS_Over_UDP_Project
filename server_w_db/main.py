@@ -10,6 +10,7 @@ from Client_class import Client
 from globals_ import serverAHost, serverAPort, serverBHost, serverBPort
 
 """
+TODO - server update ip/port
 TODO - have a list of ip/port being used
 TODO - show client ip/port on GUI
 TODO - for some reason, tryin to register 4th is not working

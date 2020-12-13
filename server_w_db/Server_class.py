@@ -109,6 +109,7 @@ class Server:
         self.dbControl.editUserData(clientMessage.name, DatabaseController.User.UserDataType.SUBJECT_INTEREST, clientMessage.subjects)
     
     def update_user_socket_info_paused(self, clientMessage):
+        print("server " + self.name + " ack. ip/port update for client " + clientMessage.name)
         resultA = self.dbControl.editUserData(clientMessage.name, DatabaseController.User.UserDataType.IP_ADDRESS, clientMessage.ipAddress)
         resultB = self.dbControl.editUserData(clientMessage.name, DatabaseController.User.UserDataType.SOCKET_NUMBER, clientMessage.socketNum)
 
@@ -249,24 +250,43 @@ class Server:
 
             self.stopFlag = True
 
-            self.HOST = input("ipAddress : ")
-            self.PORT = int(input("port : "))
+            newHost = input("host : ")
+            newPort = int(input("port : "))
 
-            # NOTE : Need to close and make a new socket before updating new ip address and port
-            # close socket
-            self.serverSocket.shutdown(socket.SHUT_RD)
-            self.serverSocket.close()
+            try:
+                # check if ip is legal
+                socket.inet_aton(newHost)
 
-            # create new socket
-            self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            self.serverSocket.bind((self.HOST, self.PORT))
-            self.serverSocket.settimeout(TIMEOUT) # un-block after TIMEOUT s
+                # check if port is legal
+                # port should be an integer from 1-65535
+                if not(1 < newPort < 65535):
+                    raise socket.error
 
-            # send to other server
-            msg = Message(type_ = MessageTypes.UPDATE_SERVER, name = self.name, ipAddress=self.HOST, socketNum=self.PORT, isServer=True)
-            self.sendMsg(self.msgControl.serialize(msg), self.otherServer.HOST, self.otherServer.PORT)
+                # set ip/port
+                self.HOST = newHost
+                self.PORT = newPort
 
-            self.stopFlag = False
+                # NOTE : Need to close and make a new socket before updating new ip address and port
+                # close socket
+                self.serverSocket.shutdown(socket.SHUT_RD)
+                self.serverSocket.close()
+
+                # create new socket
+                self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                self.serverSocket.bind((self.HOST, self.PORT))
+                self.serverSocket.settimeout(TIMEOUT) # un-block after TIMEOUT s
+
+                # send to other server
+                msg = Message(type_ = MessageTypes.UPDATE_SERVER, name = self.name, ipAddress=self.HOST, socketNum=self.PORT, isServer=True)
+                self.sendMsg(self.msgControl.serialize(msg), self.otherServer.HOST, self.otherServer.PORT)
+
+            except socket.error:
+                # Not legal
+                print("ip address/port invalid")
+
+            finally:
+                # resume listening
+                self.stopFlag = False
 
     def clients_online(self):
         return self.dbControl.get_online_size()
