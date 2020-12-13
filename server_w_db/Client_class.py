@@ -3,6 +3,7 @@ import threading
 import time
 from message_db import Message, MessageController, MessageTypes
 from globals_ import serverAHost, serverAPort, serverBHost, serverBPort, TIMEOUT
+from tools.socket_tools import check_ip_port
 
 #import threading
 import cgitb 
@@ -114,15 +115,10 @@ class Client:
         newHost = input("host : ")
         newPort = int(input("port : "))
 
-        try:
-            # check if ip is legal
-            socket.inet_aton(newHost)
+        # check if valid
+        valid = check_ip_port(newHost, newPort)
 
-            # check if port is legal
-            # port should be an integer from 1-65535
-            if not(1 < newPort < 65535):
-                raise socket.error
-
+        if valid:
             # legal
 
             # set ip/port
@@ -139,13 +135,10 @@ class Client:
             self.clientSocket.bind((self.HOST, self.PORT))
             self.clientSocket.settimeout(TIMEOUT) # un-block after 1s
 
-        except socket.error:
-            # Not legal
-            self.print_output("ip address/port invalid")
+        # resume listening
+        self.stopListenFlag = False
 
-        finally:
-            # resume listening
-            self.stopListenFlag = False
+        return valid
     
     def set_server(self, host, port):
         self.serverHost = host
@@ -225,12 +218,16 @@ class Client:
                 self.disconnect()
                 
                 # update host and port
-                self.update_host_port()
-                
-                msg = Message(type_ = MessageTypes.UPDATE, rqNum = 1, name = self.name, 
-                    ipAddress = self.HOST, socketNum = self.PORT, host = self.HOST, port = self.PORT)
+                valid = self.update_host_port()
 
-                self.sendMsg(self.msgControl.serialize(msg))
+                if valid:
+                    msg = Message(type_ = MessageTypes.UPDATE, rqNum = 1, name = self.name, 
+                        ipAddress = self.HOST, socketNum = self.PORT, host = self.HOST, port = self.PORT)
+
+                    self.sendMsg(self.msgControl.serialize(msg))
+
+                else:
+                    self.print_output("invalid ip/port")
 
                 # tell the server to connect the client
                 self.connect()
@@ -323,7 +320,7 @@ class Client:
 
     def print_output(self, text = "default"):
         print(text)
-        # self.printSignal.emit(text) # signal emitted to print out in GUI
+        self.printSignal.emit(text) # signal emitted to print out in GUI
 
     def update_host_port_ui(self, newHost, newPort):
         # FIXME : since timeout 1s, there is a possbility that we are listenMsg + bind at the same time == ERROR
@@ -337,15 +334,9 @@ class Client:
         # stop listening
         self.stopListenFlag = True
 
-        try:
-            # check if ip is legal
-            socket.inet_aton(newHost)
+        valid = check_ip_port(newHost, newPort)
 
-            # check if port is legal
-            # port should be an integer from 1-65535
-            if not(1 < newPort < 65535):
-                raise socket.error
-
+        if valid:
             # legal
 
             # set ip/port
@@ -362,13 +353,10 @@ class Client:
             self.clientSocket.bind((self.HOST, self.PORT))
             self.clientSocket.settimeout(TIMEOUT) # un-block after 1s
 
-        except socket.error:
-            # Not legal
-            self.print_output("ip address/port invalid")
+        # resume listening
+        self.stopListenFlag = False
 
-        finally:
-            # resume listening
-            self.stopListenFlag = False
+        return valid
 
     def send_message(self, messageType, messageData):
         if messageType == MessageTypes.REGISTER.value:
@@ -387,12 +375,16 @@ class Client:
             self.disconnect()
             
             # update host and port
-            self.update_host_port_ui(messageData["ipAddress"], messageData["socketNum"])
+            valid = self.update_host_port_ui(messageData["ipAddress"], messageData["socketNum"])
             
-            msg = Message(type_ = MessageTypes.UPDATE, rqNum = 1, name = self.name, 
-                ipAddress = self.HOST, socketNum = self.PORT, host = self.HOST, port = self.PORT)
+            if valid:
+                msg = Message(type_ = MessageTypes.UPDATE, rqNum = 1, name = self.name, 
+                    ipAddress = self.HOST, socketNum = self.PORT, host = self.HOST, port = self.PORT)
 
-            self.sendMsg(self.msgControl.serialize(msg))
+                self.sendMsg(self.msgControl.serialize(msg))
+
+            else:
+                self.print_output("invalid ip/port")
 
             # tell the server to connect the client
             self.connect()

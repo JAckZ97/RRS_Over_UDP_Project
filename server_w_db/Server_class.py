@@ -5,6 +5,7 @@ import threading
 from message_db import Message, MessageController, MessageTypes
 from database import DatabaseController
 from globals_ import  TIMEOUT
+from tools.socket_tools import check_ip_port
 
 class Server:
 
@@ -253,14 +254,9 @@ class Server:
             newHost = input("host : ")
             newPort = int(input("port : "))
 
-            try:
-                # check if ip is legal
-                socket.inet_aton(newHost)
+            valid = check_ip_port(newHost, newPort)
 
-                # check if port is legal
-                # port should be an integer from 1-65535
-                if not(1 < newPort < 65535):
-                    raise socket.error
+            if valid:
 
                 # set ip/port
                 self.HOST = newHost
@@ -280,13 +276,10 @@ class Server:
                 msg = Message(type_ = MessageTypes.UPDATE_SERVER, name = self.name, ipAddress=self.HOST, socketNum=self.PORT, isServer=True)
                 self.sendMsg(self.msgControl.serialize(msg), self.otherServer.HOST, self.otherServer.PORT)
 
-            except socket.error:
-                # Not legal
-                print("ip address/port invalid")
+            # resume listening
+            self.stopFlag = False
 
-            finally:
-                # resume listening
-                self.stopFlag = False
+            return valid
 
     def clients_online(self):
         return self.dbControl.get_online_size()

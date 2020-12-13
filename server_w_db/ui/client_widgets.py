@@ -39,6 +39,10 @@ class InputBox(QtWidgets.QGroupBox):
         self.subjects = InputLine("subjects", messageData)
         self.text = InputLine("text", messageData)
 
+        #To allow only int
+        self.onlyInt = QtGui.QIntValidator()
+        self.socketNum.line.setValidator(self.onlyInt)
+
         self.layout.addWidget(self.ipAddress)
         self.layout.addWidget(self.socketNum)
         self.layout.addWidget(self.reason)

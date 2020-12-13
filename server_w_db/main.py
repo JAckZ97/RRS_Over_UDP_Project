@@ -8,6 +8,7 @@ from ui.client_window import ClientWindow
 from ui.client_widgets import PrintSignal
 from Client_class import Client
 from globals_ import serverAHost, serverAPort, serverBHost, serverBPort
+from tools.socket_tools import check_ip_port
 
 """
 TODO - server update ip/port
@@ -81,9 +82,20 @@ if __name__ == '__main__':
     #     if len(messageList) != 3:
     #         print("must enter proper format")
     #         sys.exit()
+        
+    #     name = messageList[0]
+    #     host = messageList[1]
+    #     port = int(messageList[2])
 
-    #     client = Client(messageList[0], messageList[1], int(messageList[2]))
-    #     clients.append(client)
+    #     valid = check_ip_port(host, port)
+
+    #     if valid:
+    #         client = Client(name, host, port)
+    #         clients.append(client)
+
+    #     else:
+    #         print("invalid ip/port")
+    #         sys.exit()
     
     clientA = Client("HAOCHENG", "127.0.0.10", 8888)
     clientA.set_server(serverAHost, serverAPort)
