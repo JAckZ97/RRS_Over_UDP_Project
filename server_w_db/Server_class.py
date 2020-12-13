@@ -3,6 +3,7 @@ import socket
 import threading
 from message_db import Message, MessageController, MessageTypes
 from database import DatabaseController
+from globals_ import  TIMEOUT
 
 class Server:
 
@@ -44,10 +45,13 @@ class Server:
 
         self.listenClient = True
         self.stopFlag = False
-        self.serverSocket.settimeout(0.1) # un-block after 2s
+        self.serverSocket.settimeout(TIMEOUT) # un-block after 2s
 
         # List of Possible Subjects
         self.subjectOfInterests = ["ps", "xbox", "pc", "nintendo", "vr"]
+
+        # message queue
+        self.msgQueue = []
 
     def set_otherServer(self, otherServer):
         self.otherServer = otherServer
@@ -322,17 +326,24 @@ class Server:
                     data, addr = self.listenMsg()
                     message = self.msgControl.deserialize(data)
 
-                    # check if message is from client or server
-                    if (message.isServer == False) and self.listenClient == False:
-                        pass
-                    else:
-                        self.messageFunctions[message.type_](message)
+                    # add to queue
+                    self.msgQueue.append(message)
 
                 except socket.timeout:
                     # print("server time out")
                     pass
 
                 # FIXME : problem is that we cannot close the server, when it is waiting in the listenMsg() function (its blocking)
+
+    def run_msg_queue(self):
+        while self.runServerFlag:
+            if len(self.msgQueue) > 0:
+                message = self.msgQueue.pop(0)
+                # check if message is from client or server
+                if (message.isServer == False) and self.listenClient == False:
+                    pass
+                else:
+                    self.messageFunctions[message.type_](message)
 
     def start(self):
         # FIXME : the problem is that when a server gets reconnected, it will listenMsg to any msg in the input buffer
@@ -345,6 +356,9 @@ class Server:
         # self.empty_socket(self.serverSocket)
         serverThread = threading.Thread(target=self.run)
         serverThread.start()
+
+        queueThread = threading.Thread(target=self.run_msg_queue)
+        queueThread.start()
 
         # NOTE : in theory, the thread ends when we "pause" the server, so dont need thread.join() ?
 

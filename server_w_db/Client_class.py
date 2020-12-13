@@ -2,7 +2,7 @@ import socket
 import threading
 import time
 from message_db import Message, MessageController, MessageTypes
-from globals_ import serverAHost, serverAPort, serverBHost, serverBPort
+from globals_ import serverAHost, serverAPort, serverBHost, serverBPort, TIMEOUT
 
 class Client:
     
@@ -32,9 +32,12 @@ class Client:
 
         self.stopListenFlag = False
 
-        self.clientSocket.settimeout(1) # un-block after 1s
+        self.clientSocket.settimeout(TIMEOUT) # un-block after 1s
 
         self.options = ["register", "update", "deregister", "subject", "publish", "ping", "update-server-rq"]
+
+        # message queue
+        self.msgQueue = []
 
     # Message Functions
     def ping_test(self, message):
@@ -126,8 +129,11 @@ class Client:
         listenThread = threading.Thread(target=self.listen_thread)
         listenThread.start()
 
+        queueThread = threading.Thread(target=self.run_msg_queue)
+        queueThread.start()
+
     def stop(self):
-        self.runServerFlag = False
+        self.runClientFlag = False
 
     def connect(self):
         msg = Message(type_ = MessageTypes.CONNECT, name = self.name)
@@ -238,25 +244,27 @@ class Client:
                 print("invalid choice")
                 
     def listen_thread(self):
-        self.runServerFlag = True
+        self.runClientFlag = True
 
-        while self.runServerFlag:
+        while self.runClientFlag:
             if not self.stopListenFlag:
                 try:
                     data, addr = self.listenMsg()
                     message = self.msgControl.deserialize(data)
-                    self.messageFunctions[message.type_](message)
-
-                    # FIXME : just to make printing pretty
-                    print("")
+                    
+                    # add to queue
+                    self.msgQueue.append(message)
 
                 except socket.timeout:
                     # print("server time out")
                     pass
-            
-            else:
-                time.sleep(0.001)
 
+    def run_msg_queue(self):
+        while self.runClientFlag:
+            if len(self.msgQueue) > 0:
+                message = self.msgQueue.pop(0)
+                self.messageFunctions[message.type_](message)
+            
 # GUI related functions
 
     def init(self):
