@@ -247,6 +247,7 @@ class Client:
         self.runClientFlag = True
 
         while self.runClientFlag:
+            time.sleep(0.001)
             if not self.stopListenFlag:
                 try:
                     data, addr = self.listenMsg()
@@ -261,6 +262,7 @@ class Client:
 
     def run_msg_queue(self):
         while self.runClientFlag:
+            time.sleep(0.001)
             if len(self.msgQueue) > 0:
                 message = self.msgQueue.pop(0)
                 self.messageFunctions[message.type_](message)

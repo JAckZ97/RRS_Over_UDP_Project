@@ -1,5 +1,6 @@
 import select
 import socket
+import time
 import threading
 from message_db import Message, MessageController, MessageTypes
 from database import DatabaseController
@@ -321,6 +322,7 @@ class Server:
         print("running server -> ", self.name)
 
         while self.runServerFlag:
+            time.sleep(0.001)
             if not self.stopFlag:
                 try:
                     data, addr = self.listenMsg()
@@ -337,6 +339,7 @@ class Server:
 
     def run_msg_queue(self):
         while self.runServerFlag:
+            time.sleep(0.001)
             if len(self.msgQueue) > 0:
                 message = self.msgQueue.pop(0)
                 # check if message is from client or server
