@@ -37,21 +37,27 @@ serverB.set_otherServer(serverA)
 serverA.start()
 serverB.start()
 
-# # run system
-while not exitFlag:
-    # switch listening server every random minutes
+try:
+    # # run system
+    while not exitFlag:
+        # switch listening server every random minutes
 
-    # NOTE : Server A starts first
+        # NOTE : Server A starts first
 
-    # if serverA.clients_online() >= 1: # only switch if there is at leats one client online
+        # if serverA.clients_online() >= 1: # only switch if there is at leats one client online
 
-    switch_server(serverA,serverB)
+        switch_server(serverA,serverB)
 
-    time.sleep(random.randint(1,3))
+        time.sleep(random.randint(1,3))
 
-    switch_server(serverB,serverA)
+        switch_server(serverB,serverA)
 
-    time.sleep(random.randint(1,3))
+        time.sleep(random.randint(1,3))
+
+except KeyboardInterrupt:
+    serverA.stop()
+    serverB.stop()
+    print("done.")
 
 # FIXME 
 # currently, the only "hiccup" is that when we update the ipaddress + port of the

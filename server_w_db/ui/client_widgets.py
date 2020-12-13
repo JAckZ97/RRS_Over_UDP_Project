@@ -79,7 +79,14 @@ class InputLine(QtWidgets.QWidget):
         self.setLayout(self.layout)
 
     def set_data(self):
-        self.messageData[self.label.text()] = self.line.text()
+        # if it is subjects, then split it
+        if self.label.text() == "subjects":
+            subjects = self.line.text().split()
+
+            self.messageData[self.label.text()] = subjects
+
+        else:
+            self.messageData[self.label.text()] = self.line.text()
 
 class SendButton(QtWidgets.QPushButton):
     def __init__(self):

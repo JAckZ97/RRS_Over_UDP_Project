@@ -6,6 +6,7 @@ SOI:
   - wat
   ps:
   - default
+  - asd
   vr:
   - default
   xbox:
@@ -27,10 +28,12 @@ User:
     socket_number: 8888
     subject_interest:
     - pc
-  -1909521456:
+  -99949991:
     client_name: HAOCHENG
     ip_address: 127.0.0.10
     is_connected: true
     register_status: false
     socket_number: 8888
-    subject_interest: ''
+    subject_interest:
+    - ps
+    - nintendo

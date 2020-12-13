@@ -55,27 +55,27 @@ class Client:
         self.print_output("I " + self.name + " is registered !")
 
     def print_updated_socket_info(self, message):
-        print("I " + self.name + " is updated !")
+        self.print_output("I " + self.name + " is updated !")
 
     def print_registered_denied(self, message):
         self.print_output("I " + self.name + " is registered denied !")
 
     def print_updated_socket_info_denied(self, message):
-        print("I " + self.name + " is updated denied !")
+        self.print_output("I " + self.name + " is updated denied !")
 
     def print_updated_soi(self, message):
-        print("I " + self.name + " SOI is updated !")
+        self.print_output("I " + self.name + " SOI is updated !")
 
     def print_updated_soi_denied(self, message):
-        print("I " + self.name + " SOI is denied !")
-        print(message.reason)
+        self.print_output("I " + self.name + " SOI is denied !")
+        self.print_output(message.reason)
 
     def print_publish_message(self, message):
-        print("I " + self.name + " receive message " + message.text)
+        self.print_output("I " + self.name + " receive message " + message.text)
 
     def print_publish_denied(self, message):
-        print("I " + self.name + " publish is denied !")
-        print(message.reason)
+        self.print_output("I " + self.name + " publish is denied !")
+        self.print_output(message.reason)
 
     # Class Functions
     def listenMsg(self):
@@ -121,6 +121,9 @@ class Client:
 
         listenThread = threading.Thread(target=self.listen_thread)
         listenThread.start()
+
+    def stop(self):
+        self.runServerFlag = False
 
     def connect(self):
         msg = Message(type_ = MessageTypes.CONNECT, name = self.name)
@@ -231,7 +234,9 @@ class Client:
                 print("invalid choice")
                 
     def listen_thread(self):
-        while True:
+        self.runServerFlag = True
+
+        while self.runServerFlag:
             if not self.stopListenFlag:
                 try:
                     data, addr = self.listenMsg()
@@ -315,6 +320,26 @@ class Client:
             msg = Message(type_ = MessageTypes.DEREGISTER, rqNum = 1, name = self.name, host = self.HOST, port = self.PORT)
 
             self.sendMsg(self.msgControl.serialize(msg))
+
+        elif messageType == MessageTypes.PUBLISH.value:
+            subjects = messageData["subjects"]
+
+            if len(subjects) > 1:
+                print("too many subjects")
+
+            else:
+                news = messageData["text"]
+                msg = Message(type_ = MessageTypes.PUBLISH, rqNum = 1, name = self.name, subjects = subjects, text = news,  host = self.HOST, port = self.PORT)
+
+                self.sendMsg(self.msgControl.serialize(msg))
+
+        elif messageType == MessageTypes.SUBJECTS.value:
+                print(["ps", "xbox", "pc", "nintendo", "vr"])
+                subjects = messageData["subjects"]
+    
+                msg = Message(type_ = MessageTypes.SUBJECTS, rqNum = 1, name = self.name, subjects = subjects, host = self.HOST, port = self.PORT)
+
+                self.sendMsg(self.msgControl.serialize(msg))
 
         elif messageType == MessageTypes.PING.value:
             msg = Message(type_ = MessageTypes.PING, rqNum = 1, name = self.name, host = self.HOST, port = self.PORT)

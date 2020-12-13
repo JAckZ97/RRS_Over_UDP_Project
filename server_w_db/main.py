@@ -7,6 +7,9 @@ from PySide2 import QtGui
 from ui.client_window import ClientWindow
 
 """
+TODO - updating ipadress of client -> and then restart the system (get error since ipaddress in test_client is not the same)
+TODO - show the available subjects
+TODO - random crashes (when you spam message commands) -> maybe because of the timeout
 TODO - for some reason the UPDATE message is not working ...
 TODO - put all the message commands
 TODO - blur inputline that not from message commands
@@ -66,5 +69,10 @@ if __name__ == '__main__':
     # Show Window
     window.show()
 
-    # Exit
-    sys.exit(app.exec_())
+    try:
+        # Exit
+        sys.exit(app.exec_())
+
+    except KeyboardInterrupt:
+        client.stop()
+        print("done.")

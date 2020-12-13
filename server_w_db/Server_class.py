@@ -311,8 +311,11 @@ class Server:
         # reset flag
         self.stopFlag = False
         self.listenClient = True
+        self.runServerFlag = True
+
         print("running server -> ", self.name)
-        while True:
+
+        while self.runServerFlag:
             if not self.stopFlag:
                 try:
                     data, addr = self.listenMsg()
@@ -343,6 +346,9 @@ class Server:
         serverThread.start()
 
         # NOTE : in theory, the thread ends when we "pause" the server, so dont need thread.join() ?
+
+    def stop(self):
+        self.runServerFlag = False
 
     # NOTE : 2 different ways to empty input buffer
     def empty_socket(self, sock):
