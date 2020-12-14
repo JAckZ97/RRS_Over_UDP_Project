@@ -37,7 +37,7 @@ class Client:
 
         self.stopListenFlag = False
 
-        self.clientSocket.settimeout(TIMEOUT) # un-block after 1s
+        # self.clientSocket.settimeout(TIMEOUT) # un-block after 1s
 
         self.options = ["register", "update", "deregister", "subject", "publish", "ping", "update-server-rq"]
 
@@ -133,7 +133,7 @@ class Client:
             # create new socket
             self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.clientSocket.bind((self.HOST, self.PORT))
-            self.clientSocket.settimeout(TIMEOUT) # un-block after 1s
+            # self.clientSocket.settimeout(TIMEOUT) # un-block after 1s
 
         # resume listening
         self.stopListenFlag = False
@@ -351,7 +351,7 @@ class Client:
             # create new socket
             self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.clientSocket.bind((self.HOST, self.PORT))
-            self.clientSocket.settimeout(TIMEOUT) # un-block after 1s
+            # self.clientSocket.settimeout(TIMEOUT) # un-block after 1s
 
         # resume listening
         self.stopListenFlag = False

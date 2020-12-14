@@ -17,3 +17,17 @@ User:
     register_status: false
     socket_number: 0
     subject_interest: ''
+  1435129951:
+    client_name: BOB
+    ip_address: 127.0.0.13
+    is_connected: false
+    register_status: false
+    socket_number: 8888
+    subject_interest: ''
+  1775739574:
+    client_name: PHIL
+    ip_address: 127.0.0.12
+    is_connected: false
+    register_status: false
+    socket_number: 8888
+    subject_interest: ''

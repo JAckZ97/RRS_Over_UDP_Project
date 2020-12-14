@@ -11,6 +11,9 @@ from globals_ import serverAHost, serverAPort, serverBHost, serverBPort
 from tools.socket_tools import check_ip_port
 
 """
+TODO - show which server is running on the client side
+TODO - timeout -> remove ( both on the constructor and the update function )
+TODO - shutdown server handling on the client side
 TODO - server update ip/port
 TODO - have a list of ip/port being used
 TODO - show client ip/port on GUI

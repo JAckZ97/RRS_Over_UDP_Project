@@ -47,7 +47,7 @@ class Server:
 
         self.listenClient = True
         self.stopFlag = False
-        self.serverSocket.settimeout(TIMEOUT) # un-block after TIMEOUT
+        # self.serverSocket.settimeout(TIMEOUT) # un-block after TIMEOUT
 
         # List of Possible Subjects
         self.subjectOfInterests = ["ps", "xbox", "pc", "nintendo", "vr"]
@@ -270,7 +270,7 @@ class Server:
                 # create new socket
                 self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                 self.serverSocket.bind((self.HOST, self.PORT))
-                self.serverSocket.settimeout(TIMEOUT) # un-block after TIMEOUT s
+                # self.serverSocket.settimeout(TIMEOUT) # un-block after TIMEOUT
 
                 # send to other server
                 msg = Message(type_ = MessageTypes.UPDATE_SERVER, name = self.name, ipAddress=self.HOST, socketNum=self.PORT, isServer=True)

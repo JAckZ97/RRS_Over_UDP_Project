@@ -7,7 +7,7 @@ def check_ip_port(ipAddress, portNum):
 
         # check if port is legal
         # port should be an integer from 1-65535
-        if not(1 < portNum < 65535):
+        if not(1025 < portNum < 65535):
             raise socket.error
 
         return True
