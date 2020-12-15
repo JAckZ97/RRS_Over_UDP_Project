@@ -17,10 +17,11 @@ User:
     register_status: false
     socket_number: 0
     subject_interest: ''
-  996293670:
+  1400931102:
     client_name: BOB
-    ip_address: 127.0.0.14
-    is_connected: true
+    ip_address: 127.0.0.13
+    is_connected: false
     register_status: false
     socket_number: 8888
-    subject_interest: ''
+    subject_interest:
+    - ps

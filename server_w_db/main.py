@@ -11,23 +11,27 @@ from globals_ import serverAHost, serverAPort, serverBHost, serverBPort
 from tools.socket_tools import check_ip_port
 
 """
-TODO - show which server is running on the client side
-TODO - timeout -> remove ( both on the constructor and the update function )
-TODO - shutdown server handling on the client side
-TODO - change run_msg_queue -> process_thread (naming)
+- important
 TODO - server update ip/port
+TODO - adding user information
+TODO - shutdown server handling on the client side
 TODO - have a list of ip/port being used
-TODO - show client ip/port on GUI
-TODO - for some reason, tryin to register 4th is not working
-TODO - register as deafult message command
-TODO - updating ipadress of client -> and then restart the system (get error since ipaddress in test_client is not the same)
 TODO - show the available subjects
-TODO - random crashes (when you spam message commands) -> maybe because of the timeout
-TODO - for some reason the UPDATE message is not working ...
-TODO - put all the message commands
 TODO - blur inputline that not from message commands
-TODO - connect client at the beggining if we remove the client.run()
+
+- less important
+TODO - rqNum add
+TODO - improve the print messages that are sent from server to client, vice versa
+TODO - show which server is running on the client side
+TODO - change run_msg_queue -> process_thread (naming)
+TODO - show client ip/port on GUI
+
+- luxury
 TODO - make window nicer (send msg icon, color scheme, font)
+TODO - cleanup code - filenames
+
+- done
+TODO - connect client at the beggining if we remove the client.run()
 """
 def except_hook(cls, exception, traceback):
     sys.__excepthook__(cls, exception, traceback)
@@ -69,12 +73,12 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
 
     # load font
-    # fontDb = QtGui.QFontDatabase()
-    # fontPixel = fontDb.addApplicationFont("resources/fonts/dogicapixel.ttf")
+    fontDb = QtGui.QFontDatabase()
+    fontPixel = fontDb.addApplicationFont("ui/resources/fonts/dogicapixel.ttf")
 
     # load stylesheet
-    # with open("resources/style.qss", "r") as f:
-    #     app.setStyleSheet(f.read())
+    with open("ui/resources/style.qss", "r") as f:
+        app.setStyleSheet(f.read())
 
     # Input Clients
     # clients = []
