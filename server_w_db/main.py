@@ -29,6 +29,10 @@ TODO - blur inputline that not from message commands
 TODO - connect client at the beggining if we remove the client.run()
 TODO - make window nicer (send msg icon, color scheme, font)
 """
+def ReadQss(style):
+    with open(style, 'r') as f:
+        return f.read()
+
 def except_hook(cls, exception, traceback):
     sys.__excepthook__(cls, exception, traceback)
 
@@ -141,6 +145,11 @@ if __name__ == '__main__':
         client.start()
 
     for window in windows:
+
+        styleFile = './ui/Style.qss'
+        qssStyle = ReadQss(styleFile)
+        window.setStyleSheet(qssStyle)
+
         window.show()
 
     # Exit
