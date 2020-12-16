@@ -85,6 +85,7 @@ class InputLine(QtWidgets.QWidget):
         self.label = QtWidgets.QLabel(name)
 
         self.line.setMinimumSize(INPUT_MIN_SIZE[0],INPUT_MIN_SIZE[1])
+        
         self.label.setMinimumSize(LABEL_MIN_SIZE[0],LABEL_MIN_SIZE[1])
 
         self.line.textChanged.connect(self.set_data)

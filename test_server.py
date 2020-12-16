@@ -45,6 +45,12 @@ serverA.start()
 serverB.start()
 # serverB.pause()
 
+minMinute = 1
+maxMinute = 5
+
+switchTimeMin = minMinute * 60
+switchTimeMax = maxMinute * 60
+
 try:
     # # run system
     while not exitFlag:
@@ -56,11 +62,11 @@ try:
 
         switch_server(serverA,serverB)
 
-        time.sleep(random.randint(1,3))
+        time.sleep(random.randint(switchTimeMin,switchTimeMax))
 
         switch_server(serverB,serverA)
 
-        time.sleep(random.randint(1,3))
+        time.sleep(random.randint(switchTimeMin,switchTimeMax))
 
 except KeyboardInterrupt:
     serverA.stop()

@@ -13,6 +13,7 @@ from tools.socket_tools import check_ip_port
 """
 - important
 TODO - switch every x minutes !
+TODO - for some reason, rarely, we  cannot be able to register in the beginning
 
 - less important
 TODO - rqNum add
