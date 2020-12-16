@@ -38,6 +38,7 @@ class InputBox(QtWidgets.QGroupBox):
         self.reason = InputLine("reason", messageData)
         self.subjects = InputLine("subjects", messageData)
         self.text = InputLine("text", messageData)
+        self.subjectstype = SubjectsType()
 
         #To allow only int
         self.onlyInt = QtGui.QIntValidator()
@@ -47,6 +48,7 @@ class InputBox(QtWidgets.QGroupBox):
         self.layout.addWidget(self.socketNum)
         self.layout.addWidget(self.reason)
         self.layout.addWidget(self.subjects)
+        self.layout.addWidget(self.subjectstype)
         self.layout.addWidget(self.text)
 
         # Apply Layout
@@ -131,7 +133,8 @@ class SendStatus(QtWidgets.QLabel):
         self.setText("sent failed")
 
 class PrintSignal(QtCore.QObject):
-    PRINT = QtCore.Signal(str)
+    PRINT_MSG = QtCore.Signal(str)
+    PRINT_SERVER_INFO = QtCore.Signal(str)
 
     def __init__(self):
         super(PrintSignal, self).__init__()
@@ -159,10 +162,22 @@ class OutputBox(QtWidgets.QPlainTextEdit):
     def print_2_window(self, text):
         self.appendPlainText(text)
 
-
 class SubjectsType(QtWidgets.QLabel):
     def __init__(self):
         super(SubjectsType, self).__init__()
 
         # Init.
-        self.setText("List of subjects: [pc, xbox, pc, nintendo, vr]")
+        self.setText("[pc, xbox, pc, nintendo, vr]")
+
+class ServerInfo(QtWidgets.QLabel):
+    def __init__(self, serverInfo):
+        super(ServerInfo, self).__init__()
+
+        # Init.
+        self.serverInfo = serverInfo
+        self.setText(serverInfo)
+
+    @Slot(str)
+    def set_server_info(self, serverInfo):
+        self.serverInfo = serverInfo
+        self.setText(self.serverInfo)

@@ -18,6 +18,7 @@ TODO - shutdown server handling on the client side
 TODO - have a list of ip/port being used
 TODO - show the available subjects
 TODO - blur inputline that not from message commands
+TODO - sometimes trying to update server ip/port -> stuck in socket listening while loop
 
 - less important
 TODO - rqNum add
@@ -38,7 +39,8 @@ def except_hook(cls, exception, traceback):
 
 def setup_window(client):
     # Open MainWindow
-    clientWindow = ClientWindow(client.options, client.name)
+    serverInfo = client.get_server_info()
+    clientWindow = ClientWindow(client.options, client.name, serverInfo)
 
     # set send button function
     clientWindow.sendButton.set_func(client.send_message)
@@ -103,13 +105,13 @@ if __name__ == '__main__':
     serverAPort = config.read_data("A", "port")
     
     clientA = Client("HAOCHENG", "127.0.0.10", 8888)
-    clientA.set_server(serverAHost, serverAPort)
+    clientA.set_server(serverAHost, serverAPort, "A")
     clientB = Client("JACK", "127.0.0.11", 8888)
-    clientB.set_server(serverAHost, serverAPort)
+    clientB.set_server(serverAHost, serverAPort, "A")
     clientC = Client("PHIL", "127.0.0.12", 8888)
-    clientC.set_server(serverAHost, serverAPort)
+    clientC.set_server(serverAHost, serverAPort, "A")
     clientD = Client("BOB", "127.0.0.13", 8888)
-    clientD.set_server(serverAHost, serverAPort)
+    clientD.set_server(serverAHost, serverAPort, "A")
     
     clients = [clientA, clientB, clientC, clientD]
 
@@ -131,7 +133,7 @@ if __name__ == '__main__':
         window = setup_window(client)
 
         # set signal
-        client.set_print_signal(window.printSignal.PRINT) 
+        client.set_print_signal(window.printSignal) 
         # NOTE : if we dont add this, it causes random crashes since we trying to update the GUI from another thread ... 
 
         # Show Window

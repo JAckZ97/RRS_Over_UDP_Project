@@ -232,7 +232,7 @@ class Server:
     # Class functions
     def server_switch_msg(self, newServer):
         # send to message user that it was denied
-        print("server " + self.name + " switch to " + newServer.name)
+        # print("server " + self.name + " switch to " + newServer.name)
 
         # FIXME : here we need to check if the users are connected before we send a message to them !!! or else will have error
         # however, the error is only seen on WINDOWS
@@ -243,20 +243,17 @@ class Server:
             userPort = self.dbControl.readOneData(userName, DatabaseController.User.UserDataType.SOCKET_NUMBER) # FIXME -> not sure if it returns an int
 
             if self.check_connection(userName):
-                msg = Message(type_ = MessageTypes.CHANGE_SERVER, ipAddress = newServer.HOST, socketNum = newServer.PORT)
+                msg = Message(type_ = MessageTypes.CHANGE_SERVER, name = newServer.name, ipAddress = newServer.HOST, socketNum = newServer.PORT)
                 self.sendMsg(self.msgControl.serialize(msg), userHost, userPort)
 
     def update_server_info(self, message):
         if self.listenClient == False: # only paused server can update info
             # inform running server that paused server is changing ip/port
+            self.stopFlag = True
 
             while self.isListening: # wait for socket to stop listening before doing anything else
                 time.sleep(TIMEOUT)
                 print("socket still listening ...")
-            
-            # print("stopeed?")
-
-            self.stopFlag = True
 
             newHost = input("host : ")
             newPort = int(input("port : "))
@@ -368,10 +365,13 @@ class Server:
 
                 except socket.timeout:
                     # print("server time out")
+                    self.isListening = False
                     pass
 
                 finally:
                     self.isListening = False
+
+                self.isListening = False
 
                 # FIXME : problem is that we cannot close the server, when it is waiting in the listenMsg() function (its blocking)
 

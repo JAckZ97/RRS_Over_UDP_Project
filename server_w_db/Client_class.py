@@ -35,6 +35,7 @@ class Client:
 
         self.serverHost = ""
         self.serverPort = 0
+        self.serverName = ""
 
         self.stopListenFlag = False
 
@@ -58,8 +59,11 @@ class Client:
         # stop listening
         self.stopListenFlag = True
 
+        self.serverName = message.name
         self.serverHost = message.ipAddress
         self.serverPort = message.socketNum
+
+        self.printSignal.PRINT_SERVER_INFO.emit(self.get_server_info()) # update GUI about current server info
 
         # resume listening
         self.stopListenFlag = False
@@ -110,13 +114,12 @@ class Client:
 
     def update_host_port(self):
         # FIXME : since timeout 1s, there is a possbility that we are listenMsg + bind at the same time == ERROR
+        # stop listening
+        self.stopListenFlag = True
 
         while self.isListening: # wait for socket to stop listening before doing anything else
             time.sleep(TIMEOUT)
             print("socket still listening ...")
-
-        # stop listening
-        self.stopListenFlag = True
 
         newHost = input("host : ")
         newPort = int(input("port : "))
@@ -146,9 +149,13 @@ class Client:
 
         return valid
     
-    def set_server(self, host, port):
+    def set_server(self, host, port, name):
         self.serverHost = host
         self.serverPort = port
+        self.serverName = name
+
+    def get_server_info(self):
+        return "server " + self.serverName + " -> " + self.serverHost + " : " + str(self.serverPort)
 
     def run(self):
         msgThread = threading.Thread(target=self.msg_thread)
@@ -298,6 +305,7 @@ class Client:
 
                 except socket.timeout:
                     # print("server time out")
+                    self.isListening = False
                     pass
 
                 finally:
@@ -324,7 +332,7 @@ class Client:
 
     def print_output(self, text = "default"):
         print(text)
-        self.printSignal.emit(text) # signal emitted to print out in GUI
+        self.printSignal.PRINT_MSG.emit(text) # signal emitted to print out in GUI
 
     def update_host_port_ui(self, newHost, newPort):
         # FIXME : since timeout 1s, there is a possbility that we are listenMsg + bind at the same time == ERROR

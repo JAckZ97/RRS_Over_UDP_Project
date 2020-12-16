@@ -8,23 +8,23 @@ from PySide2 import QtWidgets
 from PySide2 import QtGui
 from PySide2 import QtCore
 # User Imports
-from ui.client_widgets import MessageComboBox, InputBox, SendButton, SendStatus, OutputBox, PrintSignal, SubjectsType
+from ui.client_widgets import MessageComboBox, InputBox, SendButton, SendStatus, OutputBox, PrintSignal, ServerInfo
 
 # * Code
 class ClientWindow(QtWidgets.QMainWindow):
     """
     client window
     """
-    def __init__(self, messageTypes, clientName):
+    def __init__(self, messageTypes, clientName, serverInfo):
         super(ClientWindow, self).__init__()
 
         # setup ui
-        self.setup_ui(messageTypes)
+        self.setup_ui(messageTypes, serverInfo)
         # self.setMinimumSize(700, 500)
 
         self.setWindowTitle(clientName) 
 
-    def setup_ui(self, messageTypes):
+    def setup_ui(self, messageTypes, serverInfo):
         """
         setup the ui
         """
@@ -36,12 +36,12 @@ class ClientWindow(QtWidgets.QMainWindow):
 
         self.sendButton = SendButton()
         self.inputWindow = InputBox(self.sendButton.messageData)
-        self.sendStatus = SendStatus()
         self.msgWindow = OutputBox()
-        self.subjectstype = SubjectsType()
+        self.serverInfo = ServerInfo(serverInfo)
 
         self.printSignal = PrintSignal()
-        self.printSignal.PRINT.connect(self.msgWindow.print_2_window)
+        self.printSignal.PRINT_MSG.connect(self.msgWindow.print_2_window)
+        self.printSignal.PRINT_SERVER_INFO.connect(self.serverInfo.set_server_info)
 
         # Add Widgets Functionality
         self.messageCb.currentIndexChanged.connect(self.choose_message_type)
@@ -49,10 +49,9 @@ class ClientWindow(QtWidgets.QMainWindow):
 
         # Add layouts
         self.layout.addWidget(self.messageCb, 0, 0)
-        self.layout.addWidget(self.subjectstype, 0, 1)
+        self.layout.addWidget(self.serverInfo, 0, 1)
         self.layout.addWidget(self.inputWindow, 1, 0)
         self.layout.addWidget(self.sendButton, 2, 0)
-        self.layout.addWidget(self.sendStatus, 2, 1)
         self.layout.addWidget(self.msgWindow, 1, 1)
 
         # Apply Layout
