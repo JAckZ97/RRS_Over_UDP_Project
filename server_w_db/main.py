@@ -12,13 +12,10 @@ from tools.socket_tools import check_ip_port
 
 """
 - important
-TODO - server update ip/port
-TODO - adding user information
-TODO - shutdown server handling on the client side
-TODO - have a list of ip/port being used
-TODO - show the available subjects
 TODO - blur inputline that not from message commands
-TODO - sometimes trying to update server ip/port -> stuck in socket listening while loop
+TODO - README -> write the non-optimized stuff
+        - no ability to check if server is still up or not (client perspective)
+TODO - prepare report + diagrams (to explain our program and system)
 
 - less important
 TODO - rqNum add
@@ -33,6 +30,15 @@ TODO - cleanup code - filenames
 
 - done
 TODO - connect client at the beggining if we remove the client.run()
+TODO - server update ip/port
+TODO - sometimes trying to update server ip/port -> stuck in socket listening while loop
+TODO - adding user information
+TODO - show the available subjects
+TODO - have a list of ip/port being used
+
+- not done
+TODO - shutdown server handling on the client side
+
 """
 def except_hook(cls, exception, traceback):
     sys.__excepthook__(cls, exception, traceback)

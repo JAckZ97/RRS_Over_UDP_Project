@@ -3,6 +3,7 @@ SOI:
   - default
   pc:
   - default
+  - wow new game coming out
   ps:
   - default
   vr:
@@ -17,3 +18,19 @@ User:
     register_status: false
     socket_number: 0
     subject_interest: ''
+  -972475924:
+    client_name: HAOCHENG
+    ip_address: 127.0.0.10
+    is_connected: false
+    register_status: false
+    socket_number: 8888
+    subject_interest:
+    - pc
+  751517389:
+    client_name: PHIL
+    ip_address: 127.0.0.12
+    is_connected: false
+    register_status: false
+    socket_number: 8888
+    subject_interest:
+    - pc

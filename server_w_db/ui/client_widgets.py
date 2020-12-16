@@ -38,6 +38,9 @@ class InputBox(QtWidgets.QGroupBox):
         self.reason = InputLine("reason", messageData)
         self.subjects = InputLine("subjects", messageData)
         self.text = InputLine("text", messageData)
+
+        self.inputs = [self.ipAddress, self.socketNum, self.reason, self.subjects, self.text]
+
         self.subjectstype = SubjectsType()
 
         #To allow only int
@@ -54,8 +57,17 @@ class InputBox(QtWidgets.QGroupBox):
         # Apply Layout
         self.setLayout(self.layout)
 
-    def clear(self):
-        pass
+    def reset(self):
+        # erase input +  read only for all
+        for inputLine in self.inputs:
+            inputLine.line.setReadOnly(True)
+            inputLine.line.setStyleSheet("background-color: #e1e1e1;")
+
+    def unlock(self, datatypes):
+        for inputLine in self.inputs:
+            if inputLine.label.text() in datatypes:
+                inputLine.line.setReadOnly(False)
+                inputLine.line.setStyleSheet("background-color: #FFFFFF;")
 
 class InputLine(QtWidgets.QWidget):
     def __init__(self, name, messageData):

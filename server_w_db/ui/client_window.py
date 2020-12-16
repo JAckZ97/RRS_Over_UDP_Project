@@ -59,6 +59,18 @@ class ClientWindow(QtWidgets.QMainWindow):
         self.centralWidget().setLayout(self.layout)
 
     def choose_message_type(self):
+        # blur all input
+        self.inputWindow.reset()
+
+        # unlock only needed
+        if self.messageCb.currentText() == "update":
+            self.inputWindow.unlock(["ipAddress", "socketNum"])
+        elif self.messageCb.currentText() == "subject":
+            self.inputWindow.unlock(["subjects"])
+        elif self.messageCb.currentText() == "publish":
+            self.inputWindow.unlock(["subjects", "text"])
+
+        # set message command
         self.sendButton.set_msg_type(self.messageCb.currentText())
 
     def bark(self):
