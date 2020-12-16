@@ -42,6 +42,10 @@ TODO - README -> write the non-optimized stuff
 TODO - shutdown server handling on the client side
 
 """
+def ReadQss(style):
+    with open(style, 'r') as f:
+        return f.read()
+
 def except_hook(cls, exception, traceback):
     sys.__excepthook__(cls, exception, traceback)
 
@@ -153,6 +157,11 @@ if __name__ == '__main__':
         client.start()
 
     for window in windows:
+
+        styleFile = './ui/Style.qss'
+        qssStyle = ReadQss(styleFile)
+        window.setStyleSheet(qssStyle)
+
         window.show()
 
     # Exit
