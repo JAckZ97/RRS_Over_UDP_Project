@@ -5,6 +5,7 @@ import threading
 from message_db import Message, MessageController, MessageTypes
 from database import DatabaseController
 from globals_ import  TIMEOUT
+import config
 from tools.socket_tools import check_ip_port
 
 class Server:
@@ -47,7 +48,7 @@ class Server:
 
         self.listenClient = True
         self.stopFlag = False
-        self.serverSocket.settimeout(TIMEOUT) # un-block after TIMEOUT
+        # self.serverSocket.settimeout(TIMEOUT) # un-block after TIMEOUT
 
         # List of Possible Subjects
         self.subjectOfInterests = ["ps", "xbox", "pc", "nintendo", "vr"]
@@ -224,6 +225,10 @@ class Server:
         # ack running server that paused server is changing ip/port
         print(" server " + self.name + " ack. server " + message.name + " changed ip/port to " + message.ipAddress + "/" + str(message.socketNum))
 
+        # update internal other socket server
+        self.otherServer.HOST = message.ipAddress
+        self.otherServer.PORT = message.socketNum
+
     # Class functions
     def server_switch_msg(self, newServer):
         # send to message user that it was denied
@@ -248,6 +253,8 @@ class Server:
             while self.isListening: # wait for socket to stop listening before doing anything else
                 time.sleep(TIMEOUT)
                 print("socket still listening ...")
+            
+            # print("stopeed?")
 
             self.stopFlag = True
 
@@ -257,10 +264,13 @@ class Server:
             valid = check_ip_port(newHost, newPort)
 
             if valid:
-
                 # set ip/port
                 self.HOST = newHost
                 self.PORT = newPort
+
+                # update global value 
+                config.write_data(self.name, "host", self.HOST)
+                config.write_data(self.name, "port", self.PORT)
 
                 # NOTE : Need to close and make a new socket before updating new ip address and port
                 # close socket

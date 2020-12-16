@@ -1,5 +1,5 @@
 from Client_class import Client
-from globals_ import serverAHost, serverAPort, serverBHost, serverBPort
+import config
 
 """
 server info
@@ -8,6 +8,9 @@ serverB = Server("B", "127.0.0.2", 8887)
 """
 
 data = int(input("client (0,1,2) : "))
+
+serverAHost = config.read_data("A", "host")
+serverAPort = config.read_data("A", "port")
 
 if data == 0:
     client = Client("HAOCHENG", "127.0.0.10", 8888)

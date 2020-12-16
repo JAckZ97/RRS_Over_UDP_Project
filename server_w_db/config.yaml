@@ -1,0 +1,11 @@
+server:
+  A:
+    TIMEOUT: 0.01
+    databaseFile: databaseA.yaml
+    host: 127.0.0.1
+    port: 2000
+  B:
+    TIMEOUT: 0.01
+    databaseFile: databaseB.yaml
+    host: 127.0.0.15
+    port: 8888

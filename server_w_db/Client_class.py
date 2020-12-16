@@ -2,7 +2,8 @@ import socket
 import threading
 import time
 from message_db import Message, MessageController, MessageTypes
-from globals_ import serverAHost, serverAPort, serverBHost, serverBPort, TIMEOUT
+from globals_ import  TIMEOUT
+import config
 from tools.socket_tools import check_ip_port
 
 #import threading
@@ -99,6 +100,11 @@ class Client:
     
     def sendBothServer(self, msg):
         # send to both servers
+        serverAHost = config.read_data("A", "host")
+        serverAPort = config.read_data("A", "port")
+        serverBHost = config.read_data("B", "host")
+        serverBPort = config.read_data("B", "port")
+
         self.clientSocket.sendto(msg, (serverAHost, serverAPort)) # FIXME : needs to be server host, port no ?
         self.clientSocket.sendto(msg, (serverBHost, serverBPort)) # FIXME : needs to be server host, port no ?
 
@@ -167,8 +173,7 @@ class Client:
     def connect(self):
         msg = Message(type_ = MessageTypes.CONNECT, name = self.name)
         # self.sendMsg(self.msgControl.serialize(msg))
-        self.clientSocket.sendto(self.msgControl.serialize(msg), (serverAHost, serverAPort)) # FIXME : needs to be server host, port no ?
-        self.clientSocket.sendto(self.msgControl.serialize(msg), (serverBHost, serverBPort)) # FIXME : needs to be server host, port no ?
+        self.sendBothServer(self.msgControl.serialize(msg))
 
         # # # tell the server client is connected
         # for i in range(5):
@@ -182,8 +187,7 @@ class Client:
         msg = Message(type_ = MessageTypes.DISCONNECT, name = self.name)
         # self.sendMsg(self.msgControl.serialize(msg))
 
-        self.clientSocket.sendto(self.msgControl.serialize(msg), (serverAHost, serverAPort)) # FIXME : needs to be server host, port no ?
-        self.clientSocket.sendto(self.msgControl.serialize(msg), (serverBHost, serverBPort)) # FIXME : needs to be server host, port no ?
+        self.sendBothServer(self.msgControl.serialize(msg))
 
         # for i in range(5):
         #     msg = Message(type_ = MessageTypes.DISCONNECT, name = self.name)
@@ -418,6 +422,10 @@ class Client:
         elif messageType == MessageTypes.PING.value:
             msg = Message(type_ = MessageTypes.PING, rqNum = 1, name = self.name, host = self.HOST, port = self.PORT)
             self.sendMsg(self.msgControl.serialize(msg))
+
+        elif messageType == MessageTypes.UPDATE_SERVER_REQ.value:
+            msg = Message(type_ = MessageTypes.UPDATE_SERVER_REQ, rqNum = 1, name = self.name, host = self.HOST, port = self.PORT, isServer=True)
+            self.sendBothServer(self.msgControl.serialize(msg))
 
         else:
             print("invalid choice")

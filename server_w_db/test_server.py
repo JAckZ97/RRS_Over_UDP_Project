@@ -1,6 +1,5 @@
 from Server_class import Server
-from globals_ import serverAHost, serverAPort, serverBHost, serverBPort
-from globals_ import databaseAFilePath, databaseBFilePath
+import config
 
 import time
 import random
@@ -25,6 +24,14 @@ def switch_server(closeServer, runServer):
 
 # globals
 exitFlag = False
+
+# read config
+databaseAFilePath = config.read_data("A", "databaseFile")
+databaseBFilePath = config.read_data("B", "databaseFile")
+serverAHost = config.read_data("A", "host")
+serverAPort = config.read_data("A", "port")
+serverBHost = config.read_data("B", "host")
+serverBPort = config.read_data("B", "port")
 
 # init servers and clients
 serverA = Server("A", serverAHost, serverAPort, databaseAFilePath)

@@ -76,6 +76,12 @@ class DatabaseController:
             with open(self.dbFile, "w") as f1:
                 f1.writelines(lines)
 
+        # reset config file as well
+        with open("default_config.yaml") as f:
+            lines = f.readlines()
+            with open("config.yaml", "w") as f1:
+                f1.writelines(lines)
+
     def setup(self):
         # write a default user to the database to setup the structure
         pass

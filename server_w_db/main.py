@@ -7,7 +7,7 @@ from PySide2 import QtGui
 from ui.client_window import ClientWindow
 from ui.client_widgets import PrintSignal
 from Client_class import Client
-from globals_ import serverAHost, serverAPort, serverBHost, serverBPort
+import config
 from tools.socket_tools import check_ip_port
 
 """
@@ -35,12 +35,6 @@ TODO - connect client at the beggining if we remove the client.run()
 """
 def except_hook(cls, exception, traceback):
     sys.__excepthook__(cls, exception, traceback)
-
-def setup_client():
-    client = Client("HAOCHENG", "127.0.0.10", 8888)
-    client.set_server(serverAHost, serverAPort)
-
-    return client
 
 def setup_window(client):
     # Open MainWindow
@@ -104,6 +98,9 @@ if __name__ == '__main__':
     #     else:
     #         print("invalid ip/port")
     #         sys.exit()
+
+    serverAHost = config.read_data("A", "host")
+    serverAPort = config.read_data("A", "port")
     
     clientA = Client("HAOCHENG", "127.0.0.10", 8888)
     clientA.set_server(serverAHost, serverAPort)
