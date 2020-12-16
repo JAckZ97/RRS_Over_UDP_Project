@@ -17,19 +17,28 @@ User:
     register_status: false
     socket_number: 0
     subject_interest: ''
-  -972475924:
+  -1481180262:
     client_name: HAOCHENG
     ip_address: 127.0.0.10
     is_connected: false
     register_status: false
     socket_number: 8888
     subject_interest:
-    - pc
-  751517389:
+    - nintendo
+  -1010209196:
     client_name: PHIL
     ip_address: 127.0.0.12
     is_connected: false
     register_status: false
     socket_number: 8888
     subject_interest:
-    - pc
+    - vr
+  1307817138:
+    client_name: JACK
+    ip_address: 127.0.0.11
+    is_connected: false
+    register_status: false
+    socket_number: 8888
+    subject_interest:
+    - nintendo
+    - vr

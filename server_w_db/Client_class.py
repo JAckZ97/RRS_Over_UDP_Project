@@ -52,7 +52,7 @@ class Client:
 
     # Message Functions
     def ping_test(self, message):
-        self.print_output("PING test succeed with server " + message.text)
+        self.print_output("PING test succeed with server " + message.text, False)
 
     def switch_server(self, message):
 
@@ -69,29 +69,33 @@ class Client:
         self.stopListenFlag = False
 
     def print_registered(self, message):
-        self.print_output("I " + self.name + " is registered !")
+        self.print_output(self.name + " register acknowledged" )
 
     def print_updated_socket_info(self, message):
-        self.print_output("I " + self.name + " is updated !")
+        self.print_output(self.name + "  update network info. acknowledged")
+        self.print_output("new ip/port : " + message.ipAddress + " : " + str(message.socketNum))
 
     def print_registered_denied(self, message):
-        self.print_output("I " + self.name + " is registered denied !")
+        self.print_output(self.name + " register denied")
+        self.print_output(message.reason)
 
     def print_updated_socket_info_denied(self, message):
-        self.print_output("I " + self.name + " is updated denied !")
+        self.print_output(self.name + " update denied")
+        self.print_output(message.reason)
 
     def print_updated_soi(self, message):
-        self.print_output("I " + self.name + " SOI is updated !")
+        self.print_output(self.name + " update subject of interests acknowledged")
+        self.print_output(str(message.subjects))
 
     def print_updated_soi_denied(self, message):
-        self.print_output("I " + self.name + " SOI is denied !")
+        self.print_output(self.name + " update network info. denied")
         self.print_output(message.reason)
 
     def print_publish_message(self, message):
-        self.print_output("I " + self.name + " receive message " + message.text)
+        self.print_output("News for " + str(message.subjects) + " : " + message.text)
 
     def print_publish_denied(self, message):
-        self.print_output("I " + self.name + " publish is denied !")
+        self.print_output(self.name + " publish news denied")
         self.print_output(message.reason)
 
     # Class Functions
@@ -182,110 +186,12 @@ class Client:
         # self.sendMsg(self.msgControl.serialize(msg))
         self.sendBothServer(self.msgControl.serialize(msg))
 
-        # # # tell the server client is connected
-        # for i in range(5):
-        #     msg = Message(type_ = MessageTypes.CONNECT, name = self.name)
-        #     self.sendMsg(self.msgControl.serialize(msg))
-        #     time.sleep(0.01)
-        #     print("connecting ...")
-
     def disconnect(self):
         # # tell the server client to disconnect
         msg = Message(type_ = MessageTypes.DISCONNECT, name = self.name)
         # self.sendMsg(self.msgControl.serialize(msg))
 
         self.sendBothServer(self.msgControl.serialize(msg))
-
-        # for i in range(5):
-        #     msg = Message(type_ = MessageTypes.DISCONNECT, name = self.name)
-        #     self.sendMsg(self.msgControl.serialize(msg))
-        #     time.sleep(0.01)
-        #     print("disconnecting ...")
-
-    def msg_thread(self):
-        # # tell the server client is connected
-        self.connect()
-
-        print("here are the options : ", self.options)
-
-        while True:
-            # data, addr = listenMsg()
-
-            message = input("msg (q to quit) : ")
-
-            if message == "q":
-                break
-
-            elif message == MessageTypes.REGISTER.value:
-                
-                msg = Message(type_ = MessageTypes.REGISTER, rqNum = 1, name = self.name, 
-                    ipAddress = self.HOST, socketNum = self.PORT, host = self.HOST, port = self.PORT)
-
-                self.sendBothServer(self.msgControl.serialize(msg))
-                
-            elif message == MessageTypes.UPDATE.value:
-
-                # tell the server to disconnect the client
-                self.disconnect()
-                
-                # update host and port
-                valid = self.update_host_port()
-
-                if valid:
-                    msg = Message(type_ = MessageTypes.UPDATE, rqNum = 1, name = self.name, 
-                        ipAddress = self.HOST, socketNum = self.PORT, host = self.HOST, port = self.PORT)
-
-                    self.sendMsg(self.msgControl.serialize(msg))
-
-                else:
-                    self.print_output("invalid ip/port")
-
-                # tell the server to connect the client
-                self.connect()
-
-            elif message == MessageTypes.DEREGISTER.value:
-                
-                msg = Message(type_ = MessageTypes.DEREGISTER, rqNum = 1, name = self.name, host = self.HOST, port = self.PORT)
-
-                self.sendMsg(self.msgControl.serialize(msg))
-
-            elif message == MessageTypes.SUBJECTS.value:
-                print(["ps", "xbox", "pc", "nintendo", "vr"])
-                subjects = input(" subcribe to ? (put space in between) : ")
-                subjects = subjects.split()
-    
-                msg = Message(type_ = MessageTypes.SUBJECTS, rqNum = 1, name = self.name, subjects = subjects, host = self.HOST, port = self.PORT)
-
-                self.sendMsg(self.msgControl.serialize(msg))
-
-            elif message == MessageTypes.PUBLISH.value:
-                print("What subject do you want to publish on:")
-                print(["ps", "xbox", "pc", "nintendo", "vr"])
-                subjects = input("Subject: ")
-                subjects = subjects.split()
-
-                if len(subjects) > 1:
-                    print("too many subjects")
-
-                else:
-                    print("What do you want to publish")
-                    news = input("News: ")
-                    msg = Message(type_ = MessageTypes.PUBLISH, rqNum = 1, name = self.name, subjects = subjects, text = news,  host = self.HOST, port = self.PORT)
-
-                    self.sendMsg(self.msgControl.serialize(msg))
-
-            elif message == MessageTypes.PING.value:
-                print("PING sent")
-                msg = Message(type_ = MessageTypes.PING, rqNum = 1, name = self.name, host = self.HOST, port = self.PORT)
-                self.sendMsg(self.msgControl.serialize(msg))
-
-            elif message == MessageTypes.UPDATE_SERVER_REQ.value:
-                print("admin -> update server sent")
-                msg = Message(type_ = MessageTypes.UPDATE_SERVER_REQ, rqNum = 1, name = self.name, host = self.HOST, port = self.PORT, isServer=True)
-                self.sendBothServer(self.msgControl.serialize(msg))
-
-            else:
-                print("invalid choice")
                 
     def listen_thread(self):
         self.runClientFlag = True
@@ -330,9 +236,12 @@ class Client:
     def set_output_box(self, outputBox):
         self.outputBox = outputBox
 
-    def print_output(self, text = "default"):
-        print(text)
-        self.printSignal.PRINT_MSG.emit(text) # signal emitted to print out in GUI
+    def print_output(self, text = "default", includeServer = True):
+        # print(text)
+        if includeServer:
+            self.printSignal.PRINT_MSG.emit("server " + self.serverName + " - " + text) # signal emitted to print out in GUI
+        else:
+            self.printSignal.PRINT_MSG.emit(text) # signal emitted to print out in GUI
 
     def update_host_port_ui(self, newHost, newPort):
         # FIXME : since timeout 1s, there is a possbility that we are listenMsg + bind at the same time == ERROR
@@ -396,7 +305,7 @@ class Client:
                 self.sendMsg(self.msgControl.serialize(msg))
 
             else:
-                self.print_output("invalid ip/port")
+                self.print_output("invalid ip/port", False)
 
             # tell the server to connect the client
             self.connect()

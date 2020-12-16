@@ -12,14 +12,12 @@ from tools.socket_tools import check_ip_port
 
 """
 - important
-TODO - README -> write the non-optimized stuff
-        - no ability to check if server is still up or not (client perspective)
 TODO - prepare report + diagrams (to explain our program and system)
+TODO - install program on laptop for demo (philippe)
 
 - less important
 TODO - rqNum add
 TODO - improve the print messages that are sent from server to client, vice versa
-TODO - show which server is running on the client side
 TODO - change run_msg_queue -> process_thread (naming)
 TODO - show client ip/port on GUI
 
@@ -35,6 +33,9 @@ TODO - adding user information
 TODO - show the available subjects
 TODO - have a list of ip/port being used
 TODO - blur inputline that not from message commands
+TODO - README -> write the non-optimized stuff
+        - no ability to check if server is still up or not (client perspective)
+        TODO - show which server is running on the client side
 
 - not done
 TODO - shutdown server handling on the client side
