@@ -17,10 +17,18 @@ User:
     register_status: false
     socket_number: 0
     subject_interest: ''
-  949170573:
-    client_name: JACK
-    ip_address: 127.0.0.16
+  -1911331787:
+    client_name: Nam
+    ip_address: 127.0.0.20
     is_connected: false
     register_status: false
-    socket_number: 8989
+    socket_number: 9991
     subject_interest: ''
+  -53161563:
+    client_name: Jack
+    ip_address: 127.0.0.10
+    is_connected: false
+    register_status: false
+    socket_number: 8888
+    subject_interest:
+    - pc

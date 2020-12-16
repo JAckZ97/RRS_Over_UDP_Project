@@ -134,14 +134,14 @@ class Client:
         listenThread = threading.Thread(target=self.listen_thread)
         listenThread.start()
 
-        queueThread = threading.Thread(target=self.run_msg_queue)
+        queueThread = threading.Thread(target=self.process_thread)
         queueThread.start()
 
     def start(self):
         listenThread = threading.Thread(target=self.listen_thread)
         listenThread.start()
 
-        queueThread = threading.Thread(target=self.run_msg_queue)
+        queueThread = threading.Thread(target=self.process_thread)
         queueThread.start()
 
     def stop(self):
@@ -183,7 +183,7 @@ class Client:
                 finally:
                     self.isListening = False
 
-    def run_msg_queue(self):
+    def process_thread(self):
         while self.runClientFlag:
             time.sleep(0.001)
             if len(self.msgQueue) > 0:

@@ -375,7 +375,7 @@ class Server:
 
                 # FIXME : problem is that we cannot close the server, when it is waiting in the listenMsg() function (its blocking)
 
-    def run_msg_queue(self):
+    def process_thread(self):
         while self.runServerFlag:
             time.sleep(0.001)
             if len(self.msgQueue) > 0:
@@ -398,7 +398,7 @@ class Server:
         serverThread = threading.Thread(target=self.run)
         serverThread.start()
 
-        queueThread = threading.Thread(target=self.run_msg_queue)
+        queueThread = threading.Thread(target=self.process_thread)
         queueThread.start()
 
         # NOTE : in theory, the thread ends when we "pause" the server, so dont need thread.join() ?

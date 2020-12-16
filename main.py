@@ -12,15 +12,10 @@ from tools.socket_tools import check_ip_port
 
 """
 - important
-TODO - prepare report + diagrams (to explain our program and system)
-TODO - install program on laptop for demo (philippe)
 TODO - switch every x minutes !
 
 - less important
 TODO - rqNum add
-TODO - improve the print messages that are sent from server to client, vice versa
-TODO - change run_msg_queue -> process_thread (naming)
-TODO - show client ip/port on GUI
 
 - luxury
 TODO - make window nicer (send msg icon, color scheme, font)
@@ -37,14 +32,19 @@ TODO - blur inputline that not from message commands
 TODO - README -> write the non-optimized stuff
         - no ability to check if server is still up or not (client perspective)
         TODO - show which server is running on the client side
+TODO - prepare report + diagrams (to explain our program and system)
+TODO - improve the print messages that are sent from server to client, vice versa
+TODO - change process_thread -> process_thread (naming)
+TODO - show client ip/port on GUI
+TODO - add client info in beginning
 
 - not done
 TODO - shutdown server handling on the client side
 
 """
-def ReadQss(style):
-    with open(style, 'r') as f:
-        return f.read()
+# def ReadQss(style):
+#     with open(style, 'r') as f:
+#         return f.read()
 
 def except_hook(cls, exception, traceback):
     sys.__excepthook__(cls, exception, traceback)
@@ -83,10 +83,11 @@ if __name__ == '__main__':
 
     # load font
     fontDb = QtGui.QFontDatabase()
-    fontPixel = fontDb.addApplicationFont("ui/resources/fonts/dogicapixel.ttf")
+    fontPixel = fontDb.addApplicationFont("./ui/resources/fonts/pixelmix.ttf")
 
     # load stylesheet
-    with open("ui/resources/style.qss", "r") as f:
+    styleFile = './ui/resources/style.qss'
+    with open(styleFile, "r") as f:
         app.setStyleSheet(f.read())
 
     # Input Clients
@@ -114,9 +115,15 @@ if __name__ == '__main__':
     #         print("invalid ip/port")
     #         sys.exit()
 
+    # serverAHost = config.read_data("A", "host")
+    # serverAPort = config.read_data("A", "port")
+    # for client in clients:
+    #     client.set_server(serverAHost, serverAPort, "A")
+
+    # manual clients input
     serverAHost = config.read_data("A", "host")
     serverAPort = config.read_data("A", "port")
-    
+
     clientA = Client("HAOCHENG", "127.0.0.10", 8888)
     clientA.set_server(serverAHost, serverAPort, "A")
     clientB = Client("JACK", "127.0.0.11", 8888)
@@ -126,19 +133,7 @@ if __name__ == '__main__':
     clientD = Client("BOB", "127.0.0.13", 8888)
     clientD.set_server(serverAHost, serverAPort, "A")
     
-    clients = [clientA, clientB, clientC, clientD]
-
-    # windowA = setup_window(clientA)
-    # # Start Client Thread
-    # clientA.start()
-    # # Show Window
-    # windowA.show()
-
-    # windowB = setup_window(clientB)
-    # # Start Client Thread
-    # clientB.start()
-    # # Show Window
-    # windowB.show()
+    clients = [clientA, clientB]
 
     # Open Window
     windows = []
@@ -158,9 +153,9 @@ if __name__ == '__main__':
 
     for window in windows:
 
-        styleFile = './ui/Style.qss'
-        qssStyle = ReadQss(styleFile)
-        window.setStyleSheet(qssStyle)
+        # styleFile = './ui/Style.qss'
+        # qssStyle = ReadQss(styleFile)
+        # window.setStyleSheet(qssStyle)
 
         window.show()
 
