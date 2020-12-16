@@ -1,7 +1,6 @@
 import yaml
 import enum
 
-
 # XXX: not sure readOneData purpose
 # NOTE: Register: addUser() method
 # NOTE: Update user subject of interest: editUserData() method

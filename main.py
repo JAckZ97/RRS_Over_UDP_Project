@@ -6,7 +6,7 @@ from PySide2 import QtGui
 # User Imports
 from ui.client_window import ClientWindow
 from ui.client_widgets import PrintSignal
-from Client_class import Client
+from client import Client
 import config
 from tools.socket_tools import check_ip_port
 

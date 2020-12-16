@@ -1,4 +1,4 @@
-from Server_class import Server
+from server import Server
 import config
 
 import time

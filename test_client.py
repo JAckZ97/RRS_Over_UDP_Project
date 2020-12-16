@@ -1,4 +1,4 @@
-from Client_class import Client
+from client import Client
 import config
 
 """
