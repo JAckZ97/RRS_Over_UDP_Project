@@ -1,39 +1,24 @@
 # UDP_Project
 Communication Networks and Protocols Project
 
-## Project diagram
-![Project diagram](https://raw.githubusercontent.com/JAckZ97/RRS_Over_UDP_Project/main/img/COEN445%20Project%20Diagram.jpg)
-
 ## Pre-requirement
 - Python environment
 - Virtual environment install
 
 ## Run the code
-1. Create virtual environment by
+1. Activate virtual environement (optional)
+2. Pip install libraries
     ```
-    python -m venv COEN445
+    pip install -r requirements.txt
     ```
-2. Running virtual environment by (Windows example)
-    ```
-    COEN445\Scripts\activate.bat
-    ```
-3. Pip install libraries as in section "Pip install list"
-4. Running Server first by
+3. Run Servers
     ```
     python test_server.py
     ```
-5. Running Client by (GUI will pop up)
+4. Run Clients (GUI will pop up)
     ```
     python main.py
     ```
 
-## Pip install list
-```
-pip install pyyaml
-```
-```
-pip install PySide2
-``` 
-## Resources
-Really good tutorial
-https://docs.python.org/3/howto/sockets.html
+## To Improve
+- one of the aspect of the project that we would like to improve in the future is to implement the ability for the client to detect if the server is running or not.

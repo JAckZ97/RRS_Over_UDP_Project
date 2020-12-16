@@ -12,7 +12,6 @@ from tools.socket_tools import check_ip_port
 
 """
 - important
-TODO - blur inputline that not from message commands
 TODO - README -> write the non-optimized stuff
         - no ability to check if server is still up or not (client perspective)
 TODO - prepare report + diagrams (to explain our program and system)
@@ -35,6 +34,7 @@ TODO - sometimes trying to update server ip/port -> stuck in socket listening wh
 TODO - adding user information
 TODO - show the available subjects
 TODO - have a list of ip/port being used
+TODO - blur inputline that not from message commands
 
 - not done
 TODO - shutdown server handling on the client side
