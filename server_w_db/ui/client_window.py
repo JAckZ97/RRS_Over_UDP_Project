@@ -8,7 +8,7 @@ from PySide2 import QtWidgets
 from PySide2 import QtGui
 from PySide2 import QtCore
 # User Imports
-from ui.client_widgets import MessageComboBox, InputBox, SendButton, SendStatus, OutputBox, PrintSignal
+from ui.client_widgets import MessageComboBox, InputBox, SendButton, SendStatus, OutputBox, PrintSignal, SubjectsType
 
 # * Code
 class ClientWindow(QtWidgets.QMainWindow):
@@ -38,6 +38,7 @@ class ClientWindow(QtWidgets.QMainWindow):
         self.inputWindow = InputBox(self.sendButton.messageData)
         self.sendStatus = SendStatus()
         self.msgWindow = OutputBox()
+        self.subjectstype = SubjectsType()
 
         self.printSignal = PrintSignal()
         self.printSignal.PRINT.connect(self.msgWindow.print_2_window)
@@ -48,6 +49,7 @@ class ClientWindow(QtWidgets.QMainWindow):
 
         # Add layouts
         self.layout.addWidget(self.messageCb, 0, 0)
+        self.layout.addWidget(self.subjectstype, 0, 1)
         self.layout.addWidget(self.inputWindow, 1, 0)
         self.layout.addWidget(self.sendButton, 2, 0)
         self.layout.addWidget(self.sendStatus, 2, 1)

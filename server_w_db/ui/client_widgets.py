@@ -158,3 +158,11 @@ class OutputBox(QtWidgets.QPlainTextEdit):
     @Slot(str)
     def print_2_window(self, text):
         self.appendPlainText(text)
+
+
+class SubjectsType(QtWidgets.QLabel):
+    def __init__(self):
+        super(SubjectsType, self).__init__()
+
+        # Init.
+        self.setText("List of subjects: [pc, xbox, pc, nintendo, vr]")
