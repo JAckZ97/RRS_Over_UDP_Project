@@ -62,6 +62,7 @@ class InputBox(QtWidgets.QGroupBox):
         for inputLine in self.inputs:
             inputLine.line.setReadOnly(True)
             inputLine.line.setStyleSheet("background-color: #e1e1e1;")
+            inputLine.line.setText("")
 
     def unlock(self, datatypes):
         for inputLine in self.inputs:
@@ -147,6 +148,7 @@ class SendStatus(QtWidgets.QLabel):
 class PrintSignal(QtCore.QObject):
     PRINT_MSG = QtCore.Signal(str)
     PRINT_SERVER_INFO = QtCore.Signal(str)
+    PRINT_USER_INFO = QtCore.Signal(str)
 
     def __init__(self):
         super(PrintSignal, self).__init__()
@@ -193,3 +195,16 @@ class ServerInfo(QtWidgets.QLabel):
     def set_server_info(self, serverInfo):
         self.serverInfo = serverInfo
         self.setText(self.serverInfo)
+
+class UserNetworkInfo(QtWidgets.QLabel):
+    def __init__(self, userNetworkInfo):
+        super(UserNetworkInfo, self).__init__()
+
+        # Init.
+        self.userNetworkInfo = userNetworkInfo
+        self.setText(userNetworkInfo)
+
+    @Slot(str)
+    def set_user_network_info(self, userNetworkInfo):
+        self.userNetworkInfo = userNetworkInfo
+        self.setText(self.userNetworkInfo)

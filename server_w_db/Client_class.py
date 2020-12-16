@@ -116,43 +116,6 @@ class Client:
         self.clientSocket.sendto(msg, (serverAHost, serverAPort)) # FIXME : needs to be server host, port no ?
         self.clientSocket.sendto(msg, (serverBHost, serverBPort)) # FIXME : needs to be server host, port no ?
 
-    def update_host_port(self):
-        # FIXME : since timeout 1s, there is a possbility that we are listenMsg + bind at the same time == ERROR
-        # stop listening
-        self.stopListenFlag = True
-
-        while self.isListening: # wait for socket to stop listening before doing anything else
-            time.sleep(TIMEOUT)
-            print("socket still listening ...")
-
-        newHost = input("host : ")
-        newPort = int(input("port : "))
-
-        # check if valid
-        valid = check_ip_port(newHost, newPort)
-
-        if valid:
-            # legal
-
-            # set ip/port
-            self.HOST = newHost
-            self.PORT = newPort
-
-            # NOTE : Need to close and make a new socket before updating new ip address and port
-            # close socket
-            self.clientSocket.shutdown(socket.SHUT_RD)
-            self.clientSocket.close()
-
-            # create new socket
-            self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            self.clientSocket.bind((self.HOST, self.PORT))
-            self.clientSocket.settimeout(TIMEOUT) # un-block after 1s
-
-        # resume listening
-        self.stopListenFlag = False
-
-        return valid
-    
     def set_server(self, host, port, name):
         self.serverHost = host
         self.serverPort = port
@@ -160,6 +123,9 @@ class Client:
 
     def get_server_info(self):
         return "server " + self.serverName + " -> " + self.serverHost + " : " + str(self.serverPort)
+
+    def get_user_network_info(self):
+        return self.HOST + " : " + str(self.PORT)
 
     def run(self):
         msgThread = threading.Thread(target=self.msg_thread)
@@ -273,6 +239,9 @@ class Client:
             self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.clientSocket.bind((self.HOST, self.PORT))
             self.clientSocket.settimeout(TIMEOUT) # un-block after 1s
+
+            # update gui client window
+            self.printSignal.PRINT_USER_INFO.emit(self.get_user_network_info()) # update GUI about current server info
 
         # resume listening
         self.stopListenFlag = False

@@ -14,6 +14,7 @@ from tools.socket_tools import check_ip_port
 - important
 TODO - prepare report + diagrams (to explain our program and system)
 TODO - install program on laptop for demo (philippe)
+TODO - switch every x minutes !
 
 - less important
 TODO - rqNum add
@@ -47,7 +48,8 @@ def except_hook(cls, exception, traceback):
 def setup_window(client):
     # Open MainWindow
     serverInfo = client.get_server_info()
-    clientWindow = ClientWindow(client.options, client.name, serverInfo)
+    userNetworkInfo = client.get_user_network_info()
+    clientWindow = ClientWindow(client.options, client.name, serverInfo, userNetworkInfo)
 
     # set send button function
     clientWindow.sendButton.set_func(client.send_message)
